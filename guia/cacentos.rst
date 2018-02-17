@@ -81,5 +81,8 @@ here is the command, and the root ceritficate is stored at certs/ca.cer::
 
 Now only rest, wait for a request and then sign.
 
+	openssl x509 -req -days 365 -sha1 -extfile myserver.conf -extensions v3_req -CA certs/ca.cer -CAkey private/cakey.pem -CAserial ca.srl -CAcreateserial -in private/server.csr -out certs/server.cer
+
+
 
 
