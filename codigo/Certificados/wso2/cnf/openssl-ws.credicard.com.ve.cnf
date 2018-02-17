@@ -1,0 +1,34 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+
+[req_distinguished_name]
+countryName = VE
+countryName_default = VE
+stateOrProvinceName = Distrito Capital
+stateOrProvinceName_default = Distrito Capital
+localityName = Caracas
+localityName_default = Caracas
+organizationName = Consorcio Credicard C.A
+organizationName_default = Consorcio Credicard C.A
+organizationalUnitName	= Criptografia
+organizationalUnitName_default	= Criptografia
+commonName = ws.credicard.com.ve
+commonName_default = ws.credicard.com.ve
+commonName_max	= 64
+
+[ v3_req ]
+# Extensions to add to a certificate request
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = srv-vjbossprd01.credicard.com.ve
+DNS.2 = srv-vjbossprd02.credicard.com.ve
+DNS.3 = srv-vjbossprd01.mgmt.credicard.com.ve
+DNS.4 = srv-vjbossprd02.mgmt.credicard.com.ve
+IP.1 = 10.124.2.46
+IP.2 = 10.124.3.46
+IP.3 = 10.124.2.47
+IP.4 = 10.124.3.47

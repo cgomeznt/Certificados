@@ -1,0 +1,128 @@
+Ya con los certificados y las llaves Soporte de Aplicaciones procede a consultarlos y certificar que estan bien formados y sin CLAVE
+=====================================================================================================================================
+
+6 - Chequeo de los Certifiacados generados con openssl por temas de correcitud
+	
+	openssl verify -CAfile ca.crt slbbe.credicard.com.ve.pem 
+	openssl verify -CAfile ca.crt das.credicard.com.ve.pem -ca ca.crt
+	openssl verify -CAfile ca.crt esb.credicard.com.ve.pem -ca ca.crt
+	openssl verify -CAfile ca.crt is.credicard.com.ve.pem -ca ca.crt
+	openssl verify -CAfile ca.crt ws.credicard.com.ve.pem -ca ca.crt
+	openssl verify -CAfile ca.crt serviciosbancos.credicard.com.ve.pem -ca ca.crt
+	openssl verify -CAfile ca.crt mposws.credicard.com.ve.pem -ca ca.crt
+
+7 - En la capa de los HAProxy. Crear los certificado con el formato PEM. (debe estar incluido el key del certificado, crt del certificado y el crt publico de la CA)
+
+        cat servicios.credicard.com.ve.key servicios.credicard.com.ve.crt ca.crt > servicios.credicard.com.ve.pem
+        cat slbbe.credicard.com.ve.key slbbe.credicard.com.ve.crt ca.crt > servicios.credicard.com.ve.pem
+
+8 - Copia de los certificados en el balanceador de HAproxy
+
+	cp slbbe.credicard.com.ve.pem /etc/ssl/slbbe.credicard.com.ve.pem
+	cp servicios.credicard.com.ve.pem /etc/ssl/servicios.credicard.com.ve.pem
+
+9 - Consultar los certificados.
+
+	openssl x509 -in /etc/ssl/servicios.credicard.com.ve.pem -inform pem -noout -text
+	openssl x509 -in /etc/ssl/slbbe.credicard.com.ve.pem -inform pem -noout -text
+
+10 - Reiniciamos el servicio de HAProxy
+
+        /etc/init.d/haproxy restart         
+
+
+11 - En la capa de los JBOSS. Crear los certificado con el formato P12. (debe estar incluido el key del certificado, crt del certificado y el crt publico de la CA)
+
+	openssl pkcs12 -export -name ws.credicard.com.ve -in ./ws.credicard.com.ve.crt -inkey ./ws.credicard.com.ve.key -out ./ws.credicard.com.ve.p12
+	openssl pkcs12 -export -name wsmpos.credicard.com.ve -in ./wsmpos.credicard.com.ve.crt -inkey ./wsmpos.credicard.com.ve.key -out ./wsmpos.credicard.com.ve.p12
+
+12 - Crear los certificado con el formato JKS.
+
+	keytool -importkeystore -destkeystore ./jbosswso2.jks -srckeystore ./ws.credicard.com.ve.p12 -srcstoretype pkcs12 -alias ws.credicard.com.ve
+	keytool -importkeystore -destkeystore ./wsmpos.jks -srckeystore ./wsmpos.credicard.com.ve.p12 -srcstoretype pkcs12 -alias wsmpos.credicard.com.ve
+
+13 - Agregamos la CA dentro del JKS.
+
+	keytool -import -alias CA -file ca.crt -keystore ./jbosswso2.jks
+	keytool -import -alias CA -file ca.crt -keystore ./wsmpos.jks
+
+14 - COnsultar el JKS.
+
+	keytool -list -v -keystore ./jbosswso2.jks
+	keytool -list -v -keystore ./wsmpos.jks
+
+15 - Reiniciamos el servicio de JBOSS
+
+        /etc/init.d/jboss-eap restart  
+
+
+16 - En la capa de los WSO2 vamos a crear los KeyStore. Crear los certificados con el formato P12
+
+	openssl pkcs12 -export -name esb.credicard.com.ve -in esb.credicard.com.ve.crt -inkey esb.credicard.com.ve.key -out esb.credicard.com.ve.p12
+	openssl pkcs12 -export -name is.credicard.com.ve -in is.credicard.com.ve.crt -inkey is.credicard.com.ve.key -out is.credicard.com.ve.p12
+	openssl pkcs12 -export -name das.credicard.com.ve -in das.credicard.com.ve.crt -inkey das.credicard.com.ve.key -out das.credicard.com.ve.p12
+
+17 - Crear los certificados con el formato JKS
+
+	keytool -importkeystore -destkeystore wso2carbon.jks -srckeystore esb.credicard.com.ve.p12 -srcstoretype pkcs12 -alias esb.credicard.com.ve
+	keytool -importkeystore -destkeystore wso2carbon.jks -srckeystore is.credicard.com.ve.p12 -srcstoretype pkcs12 -alias is.credicard.com.ve
+	keytool -importkeystore -destkeystore wso2carbon.jks -srckeystore das.credicard.com.ve.p12 -srcstoretype pkcs12 -alias das.credicard.com.ve
+
+18 - Agramagos la CA y el resto de los certificados dentro del JKS
+
+	keytool -importcert -alias CA -file ca.crt -keystore wso2carbon.jks -storepass DIP9863LONDR3S3cu4d0
+	keytool -importcert -alias esb.credicard.com.ve -file esb.credicard.com.ve.crt -keystore wso2carbon.jks -storepass DIP9863LONDR3S3cu4d0
+	keytool -importcert -alias is.credicard.com.ve -file is.credicard.com.ve.crt -keystore wso2carbon.jks -storepass DIP9863LONDR3S3cu4d0
+	keytool -importcert -alias das.credicard.com.ve -file das.credicard.com.ve.crt -keystore wso2carbon.jks -storepass DIP9863LONDR3S3cu4d0
+	keytool -importcert -alias servicios.credicard.com.ve -file servicios.credicard.com.ve.crt -keystore wso2carbon.jks -storepass DIP9863LONDR3S3cu4d0
+	keytool -importcert -alias serviciosbancos.credicard.com.ve -file serviciosbancos.credicard.com.ve.crt -keystore wso2carbon.jks -storepass DIP9863LONDR3S3cu4d0
+	keytool -importcert -alias slbbe.credicard.com.ve -file slbbe.credicard.com.ve.crt -keystore wso2carbon.jks -storepass DIP9863LONDR3S3cu4d0
+	keytool -importcert -alias ws.credicard.com.ve -file ws.credicard.com.ve.crt -keystore wso2carbon.jks -storepass DIP9863LONDR3S3cu4d0
+	keytool -importcert -alias wsmpos.credicard.com.ve -file wsmpos.credicard.com.ve.crt -keystore wso2carbon.jks -storepass DIP9863LONDR3S3cu4d0
+	keytool -importcert -alias feclientservices.credicard.com.ve -file feclientservices.credicard.com.ve.crt -keystore wso2carbon.jks -storepass DIP9863LONDR3S3cu4d0
+
+
+19 - COnsultar el JKS.
+
+	keytool -list -v -keystore ./wso2carbon.jks -storepass DIP9863LONDR3S3cu4d0
+
+
+
+20 - En la capa de los WSO2 vamos a crear los TrueStore. Crear los certificados con el formato P12
+
+	openssl pkcs12 -export -name feclientservices.credicard.com.ve -in feclientservices.credicard.com.ve.crt -inkey feclientservices.credicard.com.ve.key -out feclientservices.credicard.com.ve.p12
+
+
+21 - Crear los certificados con el formato JKS
+
+	keytool -importkeystore -destkeystore client-truestore.jks -srckeystore feclientservices.credicard.com.ve.p12 -srcstoretype pkcs12 -alias feclientservices.credicard.com.ve
+
+
+22 - Agramagos la CA y el resto de los certificados dentro del JKS
+
+	keytool -importcert -alias CA -file ca.crt -keystore client-truestore.jks -storepass J4P4nFYT1125LOJAeFE2
+	keytool -importcert -alias esb.credicard.com.ve -file esb.credicard.com.ve.crt -keystore client-truestore.jks -storepass J4P4nFYT1125LOJAeFE2
+	keytool -importcert -alias is.credicard.com.ve -file is.credicard.com.ve.crt -keystore client-truestore.jks -storepass J4P4nFYT1125LOJAeFE2
+	keytool -importcert -alias das.credicard.com.ve -file das.credicard.com.ve.crt -keystore client-truestore.jks -storepass J4P4nFYT1125LOJAeFE2
+	keytool -importcert -alias servicios.credicard.com.ve -file servicios.credicard.com.ve.crt -keystore client-truestore.jks -storepass J4P4nFYT1125LOJAeFE2
+	keytool -importcert -alias serviciosbancos.credicard.com.ve -file serviciosbancos.credicard.com.ve.crt -keystore client-truestore.jks -storepass J4P4nFYT1125LOJAeFE2
+	keytool -importcert -alias slbbe.credicard.com.ve -file slbbe.credicard.com.ve.crt -keystore client-truestore.jks -storepass J4P4nFYT1125LOJAeFE2
+	keytool -importcert -alias ws.credicard.com.ve -file ws.credicard.com.ve.crt -keystore client-truestore.jks -storepass J4P4nFYT1125LOJAeFE2
+	keytool -importcert -alias wsmpos.credicard.com.ve -file wsmpos.credicard.com.ve.crt -keystore client-truestore.jks -storepass J4P4nFYT1125LOJAeFE2
+	keytool -importcert -alias feclientservices.credicard.com.ve -file feclientservices.credicard.com.ve.crt -keystore client-truestore.jks -storepass J4P4nFYT1125LOJAeFE2
+
+
+23 - COnsultar el JKS.
+
+	keytool -list -v -keystore ./client-truststore.jks -storepass J4P4nFYT1125LOJAeFE2
+
+
+IMPORTANTE > en los IS despues de cambiar el KeyStore y el TrueStore y reiniciar el servicio de wso2is_server , debemos  actualizar (encriptar con el nuevo jks) en el user stores de la console admin para IS 
+MAIN >  User Stores > List > Edit
+Usuario configurado en el USER STORE usrwso2   u$rP0rt4l   (LDAP)
+Se debe hacer en ambos servidores
+https://10.124.3.42:9443/carbon/admin/login.jsp
+https://10.124.3.43:9443/carbon/admin/login.jsp
+
+Tambien es recomendable hacer lo mismo en el DAS y el ESB.
+

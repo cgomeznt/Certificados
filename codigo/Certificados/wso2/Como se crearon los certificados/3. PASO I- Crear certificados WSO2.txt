@@ -1,0 +1,112 @@
+﻿Este manuael es unicamente para ser ejecutado por Criptografia
+=================================================================
+
+
+Todos estos pasos los debe realizar el personal de Criptografia
+===================================================================
+
+
+1 - Generación de las llaves
+
+	openssl genrsa -out slbbe.credicard.com.ve.key 2048
+	openssl genrsa -out das.credicard.com.ve.key 2048
+	openssl genrsa -out esb.credicard.com.ve.key 2048
+	openssl genrsa -out is.credicard.com.ve.key 2048
+	openssl genrsa -out ws.credicard.com.ve.key 2048
+	openssl genrsa -out serviciosbancos.credicard.com.ve.key 2048
+	openssl genrsa -out mposws.credicard.com.ve.key 2048
+
+2 - Generación del request de certificación
+
+	openssl req -new -out slbbe.credicard.com.ve.csr -key slbbe.credicard.com.ve.key -config ./openssl-slbbe.credicard.com.ve.cnf
+	openssl req -new -out das.credicard.com.ve.csr -key das.credicard.com.ve.key -config ./openssl-das.credicard.com.ve.cnf
+	openssl req -new -out esb.credicard.com.ve.csr -key esb.credicard.com.ve.key -config ./openssl-esb.credicard.com.ve.cnf
+	openssl req -new -out is.credicard.com.ve.csr -key is.credicard.com.ve.key -config ./openssl-is.credicard.com.ve.cnf
+	openssl req -new -out ws.credicard.com.ve.csr -key ws.credicard.com.ve.key -config ./openssl-ws.credicard.com.ve.cnf
+	openssl req -new -out serviciosbancos.credicard.com.ve.csr -key serviciosbancos.credicard.com.ve.key -config ./openssl-serviciosbancos.credicard.com.ve.cnf
+	openssl req -new -out mposws.credicard.com.ve.csr -key mposws.credicard.com.ve.key -config ./openssl-mposws.credicard.com.ve.cnf
+
+3 - Se Consulta el Request
+
+	openssl req -text -noout -in slbbe.credicard.com.ve.csr
+	openssl req -text -noout -in das.credicard.com.ve.csr
+	openssl req -text -noout -in esb.credicard.com.ve.csr
+	openssl req -text -noout -in is.credicard.com.ve.csr
+	openssl req -text -noout -in ws.credicard.com.ve.csr
+	openssl req -text -noout -in serviciosbancos.credicard.com.ve.csr
+	openssl req -text -noout -in mposws.credicard.com.ve.csr
+
+4 - Se genera el Certificado (METODO 1, NO Recomendado porque no esta firmado por la CA de Crediard)
+
+	openssl x509 -req -days 3650 -in slbbe.credicard.com.ve.csr -signkey slbbe.credicard.com.ve.key -out slbbe.credicard.com.ve.crt -extensions v3_req -extfile openssl-slbbe.credicard.com.ve.cnf
+	openssl x509 -req -days 3650 -in das.credicard.com.ve.csr -signkey das.credicard.com.ve.key -out das.credicard.com.ve.crt -extensions v3_req -extfile openssl-das.credicard.com.ve.cnf
+	openssl x509 -req -days 3650 -in esb.credicard.com.ve.csr -signkey esb.credicard.com.ve.key -out esb.credicard.com.ve.crt -extensions v3_req -extfile openssl-esb.credicard.com.ve.cnf
+	openssl x509 -req -days 3650 -in is.credicard.com.ve.csr -signkey is.credicard.com.ve.key -out is.credicard.com.ve.crt -extensions v3_req -extfile openssl-is.credicard.com.ve.cnf
+	openssl x509 -req -days 3650 -in ws.credicard.com.ve.csr -signkey ws.credicard.com.ve.key -out ws.credicard.com.ve.crt -extensions v3_req -extfile openssl-ws.credicard.com.ve.cnf
+	openssl x509 -req -days 3650 -in serviciosbancos.credicard.com.ve.csr -signkey serviciosbancos.credicard.com.ve.key -out serviciosbancos.credicard.com.ve.crt -extensions v3_req -extfile openssl-serviciosbancos.credicard.com.ve.cnf
+	openssl x509 -req -days 3650 -in mposws.credicard.com.ve.csr -signkey mposws.credicard.com.ve.key -out mposws.credicard.com.ve.crt -extensions v3_req -extfile openssl-mposws.credicard.com.ve.cnf
+
+    Se genera el Certificado (METODO 2, Recomendado porque es firmado por la CA de Crediard. Esta esque utiliza Criptografia)
+	
+	openssl x509 -req -days  730 -in slbbe.credicard.com.ve.csr -CA ca.crt -CAkey ca.key -set_serial 170809274786220146 -out slbbe.credicard.com.ve.crt -sha256 -extensions v3_req -extfile openssl-slbbe.credicard.com.ve.cnf
+	openssl x509 -req -days  730 -in das.credicard.com.ve.csr -CA ca.crt -CAkey ca.key -set_serial 170809274786220146 -out das.credicard.com.ve.crt -sha256 -extensions v3_req -extfile openssl-das.credicard.com.ve.cnf
+	openssl x509 -req -days  730 -in esb.credicard.com.ve.csr -CA ca.crt -CAkey ca.key -set_serial 170809274786220146 -out esb.credicard.com.ve.crt -sha256 -extensions v3_req -extfile openssl-esb.credicard.com.ve.cnf
+	openssl x509 -req -days  730 -in is.credicard.com.ve.csr -CA ca.crt -CAkey ca.key -set_serial 170809274786220146 -out is.credicard.com.ve.crt -sha256 -extensions v3_req -extfile openssl-is.credicard.com.ve.cnf
+	openssl x509 -req -days  730 -in ws.credicard.com.ve.csr -CA ca.crt -CAkey ca.key -set_serial 170809274786220146 -out ws.credicard.com.ve.crt -sha256 -extensions v3_req -extfile openssl-ws.credicard.com.ve.cnf
+	openssl x509 -req -days  730 -in serviciosbancos.credicard.com.ve.csr -CA ca.crt -CAkey ca.key -set_serial 170809274786220146 -out serviciosbancos.credicard.com.ve.crt -sha256 -extensions v3_req -extfile openssl-serviciosbancos.credicard.com.ve.cnf
+	openssl x509 -req -days  730 -in wsmpos.credicard.com.ve.csr -CA ca.crt -CAkey ca.key -set_serial 170809274786220146 -out wsmpos.credicard.com.ve.crt -sha256 -extensions v3_req -extfile openssl-wsmpos.credicard.com.ve.cnf
+	
+
+
+5. Se consulta los certificados
+
+	openssl x509 -in slbbe.credicard.com.ve.crt -noout -text
+	openssl x509 -in das.credicard.com.ve.csr -noout -text
+	openssl x509 -in esb.credicard.com.ve.csr -noout -text
+	openssl x509 -in is.credicard.com.ve.csr -noout -text
+	openssl x509 -in serviciosbancos.credicard.com.ve.cs -noout -text
+	openssl x509 -in mposws.credicard.com.ve.csr -noout -text
+	
+6 - Se concatena el Certificado y la llave primaria para crear el formato PEM.
+
+	cat slbbe.credicard.com.ve.crt slbbe.credicard.com.ve.key > slbbe.credicard.com.ve.pem
+	cat das.credicard.com.ve.crt das.credicard.com.ve.key > das.credicard.com.ve.pem
+	cat esb.credicard.com.ve.crt esb.credicard.com.ve.key > esb.credicard.com.ve.pem
+	cat is.credicard.com.ve.crt is.credicard.com.ve.key > is.credicard.com.ve.pem
+	cat ws.credicard.com.ve.crt ws.credicard.com.ve.key > ws.credicard.com.ve.pem
+	cat serviciosbancos.credicard.com.ve.crt serviciosbancos.credicard.com.ve.key > serviciosbancos.credicard.com.ve.pem
+	cat mposws.credicard.com.ve.crt mposws.credicard.com.ve.key > mposws.credicard.com.ve.pem
+
+
+Lo anterior da como resultado (Y debe ser suministrado por Criptografia a Soporte de Aplicacionses):
+
+	slbbe.credicard.com.ve.csr
+	slbbe.credicard.com.ve.pem
+	slbbe.credicard.com.ve.crt
+	slbbe.credicard.com.ve.key
+	das.credicard.com.ve.csr
+	das.credicard.com.ve.pem
+	das.credicard.com.ve.crt
+	das.credicard.com.ve.key
+	esb.credicard.com.ve.csr
+	esb.credicard.com.ve.pem
+	esb.credicard.com.ve.crt
+	esb.credicard.com.ve.key
+	is.credicard.com.ve.csr
+	is.credicard.com.ve.pem
+	is.credicard.com.ve.crt
+	is.credicard.com.ve.key
+	ws.credicard.com.ve.csr
+	ws.credicard.com.ve.pem
+	ws.credicard.com.ve.crt
+	ws.credicard.com.ve.key
+	serviciosbancos.credicard.com.ve.csr
+	serviciosbancos.credicard.com.ve.pem
+	serviciosbancos.credicard.com.ve.crt
+	serviciosbancos.credicard.com.ve.key
+	mposws.credicard.com.ve.csr
+	mposws.credicard.com.ve.pem
+	mposws.credicard.com.ve.crt
+	mposws.credicard.com.ve.key
+	
+

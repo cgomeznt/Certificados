@@ -1,0 +1,6 @@
+>cat credicardenlineasc.key > /etc/ssl/credicard.com.ve.pem
+
+>cat credicardenlinea.crt >> /etc/ssl/credicard.com.ve.pem
+
+
+>openssl x509 -in /etc/ssl/credicard.com.ve.pem -inform pem -noout -text

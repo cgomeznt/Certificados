@@ -1,0 +1,182 @@
+﻿------------------------- Calle -------------------------
+
+MPOS- Firmado CA Válida Digiccert
+servicios.credicard.com.ve
+	Se requiere Key sin clave y crt sin clave -> concatenados en Archivo PEM
+
+Productos:
+	servicios.credicard.com.ve.key
+	servicios.credicard.com.ve.crt
+	servicios.credicard.com.ve.pem
+	
+WSBANCOS - Autofirmado
+serviciosbancos.credicard.com.ve
+	[alt_names]
+		DNS.1 = serviciosbancos.credicard.com.ve
+		IP.1 = 10.136.0.141 (nodo 1 haproxy)
+		IP.2 = 10.136.0.142 (nodo 2 haproxy)
+		IP.3 = 10.136.0.143 (vip haproxy frontend)
+	Se requiere Key sin clave y crt sin clave -> concatenados en Archivo PEM
+	
+Productos:
+	serviciosbancos.credicard.com.ve.key
+	serviciosbancos.credicard.com.ve.crt
+	serviciosbancos.credicard.com.ve.pem
+
+------------------------ Internos ------------------------
+
+ESB/IS/DAS/WS - Autofirmado Balanceador Backend
+slbbe.credicard.com.ve
+	[alt_names]
+		DNS.1 = slbbe.credicard.com.ve
+		DNS.2 = clusteresb.credicard.com.ve
+		DNS.3 = clusteris.credicard.com.ve
+		DNS.4 = clusterdas.credicard.com.ve
+		DNS.5 = clusterws.credicard.com.ve
+		DNS.6 = clusteresbmgmt.credicard.com.ve
+		DNS.7 = clustermposws.credicard.com.ve
+		DNS.8 = srv-vhaproxybe01.credicard.com.ve
+		DNS.9 = srv-vhaproxybe02.credicard.com.ve
+		DNS.10 = srv-vhaproxybe01.mgmt.credicard.com.ve
+		DNS.11 = srv-vhaproxybe02.mgmt.credicard.com.ve
+		IP.1 = 10.124.2.77 (vip)
+		IP.2 = 10.124.2.50 (Nodo 1 Haproxy Backend servicios)
+		IP.3 = 10.124.3.50 (Nodo 1 Haproxy Backend administrativa)
+		IP.4 = 10.124.2.51 (Nodo 1 Haproxy Backend servicios)
+		IP.5 = 10.124.3.51 (Nodo 1 Haproxy Backend administrativa)
+		Se requiere Key sin clave y crt sin clave -> concatenados en Archivo PEM
+
+Productos:
+	slbbe.credicard.com.ve.key
+	slbbe.credicard.com.ve.crt
+	slbbe.credicard.com.ve.pem
+
+ESB - Autofirmado - NODOS ESB
+esb.credicard.com.ve
+	[alt_names]
+		DNS.1 = srv-vesbprd01.credicard.com.ve
+		DNS.2 = srv-vesbprd02.credicard.com.ve
+		DNS.3 = srv-vesbadmprd01.credicard.com.ve		
+		DNS.4 = srv-vesbprd01.mgmt.credicard.com.ve
+		DNS.5 = srv-vesbprd02.mgmt.credicard.com.ve
+		DNS.6 = srv-vesbadmprd01.mgmt.credicard.com.ve
+		IP.1 = 10.124.2.40 (Nodo 1 ESB servicios)
+		IP.2 = 10.124.3.40 (Nodo 1 ESB administrativa)
+		IP.3 = 10.124.2.41 (Nodo 2 ESB servicios)
+		IP.4 = 10.124.3.41 (Nodo 2 ESB administrativa)
+		IP.5 = 10.124.2.45 (Nodo 3 ESB servicios mgmt)
+		IP.6 = 10.124.3.45 (Nodo 3 ESB administrativa mgmt)
+		Se requiere Key sin clave y crt sin clave -> concatenados en Archivo PEM
+
+Productos:
+	esb-platform.key
+	esb-platform.crt
+	esb-platform.pem
+	
+IS - Autofirmado - NODOS IS
+is.credicard.com.ve
+	[alt_names]
+		DNS.1 = srv-visprd01.credicard.com.ve
+		DNS.2 = srv-visprd02.credicard.com.ve
+		DNS.3 = srv-visprd01.mgmt.credicard.com.ve
+		DNS.4 = srv-visprd02.mgmt.credicard.com.ve
+		IP.1 = 10.124.2.42 (Nodo 1 IS servicios)
+		IP.2 = 10.124.3.42 (Nodo 1 IS administrativa)
+		IP.3 = 10.124.2.43 (Nodo 2 IS servicios)
+		IP.4 = 10.124.3.43 (Nodo 2 IS administrativa)
+		Se requiere Key sin clave y crt sin clave -> concatenados en Archivo PEM
+
+Productos:
+	IS-platform.key
+	IS-platform.crt
+	IS-platform.pem
+		
+DAS - Autofirmado - NODO DAS
+das.credicard.com.ve
+	[alt_names]
+		DNS.1 = srv-vdasprd01.credicard.com.ve
+		DNS.2 = srv-vdasprd01.mgmt.credicard.com.ve	
+		IP.1 = 10.124.2.44 (Nodo 1 DAS servicios)
+		IP.1 = 10.124.3.44 (Nodo 1 DAS administrativa)
+		Se requiere Key sin clave y crt sin clave -> concatenados en Archivo PEM
+
+Productos:
+	DAS-platform.key
+	DAS-platform.crt
+	DAS-platform.pem
+
+WS - Autofirmado
+ws.credicard.com.ve
+	[alt_names]
+		DNS.1 = srv-vjbossprd01.credicard.com.ve
+		DNS.2 = srv-vjbossprd02.credicard.com.ve
+		DNS.3 = srv-vjbossprd01.mgmt.credicard.com.ve
+		DNS.4 = srv-vjbossprd02.mgmt.credicard.com.ve
+		IP.1 = 10.124.2.46 (Nodo 1 WS servicios)
+		IP.2 = 10.124.3.46 (Nodo 1 WS administrativa)
+		IP.3 = 10.124.2.47 (Nodo 2 WS servicios)
+		IP.4 = 10.124.3.47 (Nodo 2 WS administrativa)
+		Se requiere Key sin clave y crt sin clave -> concatenados en Archivo PEM
+
+Productos:
+	WSBANCOS-platform.key
+	WSBANCOS-platform.crt
+	WSBANCOS-platform.pem
+
+
+-------------------------- MPOS ---------------------------    
+
+MPOS - Autofirmado (chequear los existentes creados por criptografía)
+mposws.credicard.com.ve
+	[alt_names]
+		DNS.1 = srv-vmpos01.credicard.com.ve
+		DNS.2 = srv-vmpos01.mgmt.credicard.com.ve
+		DNS.3 = srv-vmpos02.credicard.com.ve
+		DNS.4 = srv-vmpos02.mgmt.credicard.com.ve
+		IP.1 = 10.124.2.73 (SERVICIO NODO 1)
+		IP.2 = 10.124.3.73 (ADMINISTRATIVA NODO 1)
+		IP.3 = 10.124.2.74 (SERVICIO NODO 2)
+		IP.4 = 10.124.3.74 (ADMINISTRATIVA NODO 2)
+		Se requiere Key sin clave y crt sin clave -> concatenados en Archivo PEM
+
+Productos:
+	MPOS-platform.key
+	MPOS-platform.crt
+	MPOS-platform.pem
+	
+------------------------ Keystores ------------------------
+
+WSO2CARBON.jks
+(Se puede crear inicialmente con el certificado de ESB - Autofirmado - Nodos ESB)
+Incluir los siguietes Certificados:
+	MPOS- Firmado CA Válida Digiccert
+	WSBANCOS - Autofirmado
+	ESB - Autofirmado
+	IS - Autofirmado
+	DAS - Autofirmado
+	WS - Autofirmado
+	MPOS - Autofirmado
+
+Llaves las que indique Criptografía, preferiblemente que no tengan caracteres especiales como ?*/, etc.
+
+CLIENT-TRUSTSTORE.jks
+Incluir los siguietes Certificados:
+ALIAS		CERTIFICADO
+	MPOS- Firmado CA Válida Digiccert (Front por localloop u orquestacion)
+	WSBANCOS - Autofirmado (Front por localloop u orquestacion)
+	ESB - Autofirmado (Backend Directo)
+	IS - Autofirmado (Backend Directos)
+	DAS - Autofirmado (Backend Directo)
+	WS - Autofirmado (Frontend)
+	MPOS - Autofirmado (Frontend)
+	ESB/IS/DAS/WS - Autofirmado (Backend Balanceador)
+	
+Llaves las que indique Criptografía, preferiblemente que no tengan caracteres especiales como ?*/, etc.
+
+
+JBOSWS.jks - Validar Con amelia que se necesita!!!
+(Se puede crear inicialmente con el certificado de (ws.credicard.com.ve)
+Incluir los siguietes Certificados:
+	ESB - Autofirmado
+	WS - Autofirmado
+

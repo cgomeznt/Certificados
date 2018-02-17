@@ -1,0 +1,75 @@
+  193  mkdir SSLSAT2016
+  194  ls -ltr
+  195  clear
+  196  pwd
+  197  cd SSLSAT2016
+  198  ls -ltr
+  199  pwd
+  200  clear
+  201  cd ..
+  202  ls -ltr
+  203  cd conf
+  204  ls -ltr
+  205  less httpd.conf
+  206  cat httpd.conf
+  207  clear
+  208  clear
+  209  ls -ltr
+  210  cd ..
+  211  ls -ltr
+  212  pwd
+  213  clear
+  214  ls -ltr
+  215  cd SSLSAT2016
+  216  pwd
+  217  clear
+  218  pwd
+  219  cp /home/wcanch/credicarenlinea2016* /usr/IBM/HTTPServer/SSLSAT2016
+  220  cp /home/wcanch/credicarenlinea2016* /usr/IBM/HTTPServer/SSLSAT2016/
+  221  ls -ltr /home/wcanch
+  222  cp /home/wcanch/credicardenlinea2016.* /usr/IBM/HTTPServer/SSLSAT2016
+  223  scp /home/wcanch/credicardenlinea2016.* wcanch@10.124.0.98:/tmp
+  224  scp /home/wcanch/credicardenlinea2016.* wcanch@10.124.0.99:/tmp
+  225  scp /home/wcanch/credicardenlinea2016.* wcanch@10.124.0.101:/tmp
+  226  ls -ltr
+  227  ls -ltr /usr/IBM/HTTPServer/SSLSAT2015/
+  228  clear
+  229  cd ..
+  230  cd conf
+  231  ls -ltr httpd.conf
+  232  pwd
+  233  clear
+  234  pwd
+  235  ls -ltr httpd.conf
+  236  cp httpd.config httpd.config_08062016
+  237  cp httpd.conf httpd.conf_08062016
+  238  ls -ltr /usr/IBM/HTTPServer/SSLSAT2016/credicardenlinea2016.kdb
+  239  vi httpd.conf
+  240  vi httpd.conf
+  241  scp /home/wcanch/credicardenlinea2016.* wcanch@10.124.0.102:/tmp
+  242  clear
+  243  pwd
+
+
+
+  285  openssl s_client -connect 10.136.0.53:80 -ssl3
+  286  openssl s_client -connect 10.124.0.97:80 -ssl3
+  287  openssl s_client -connect 10.124.0.97:80 -tls1
+  288  openssl s_client -connect 10.124.0.97:80 -tls1_1
+  289  openssl s_client -connect 10.124.0.97:80 -tls1_2
+  290  openssl s_client -connect 10.124.0.97:443 -ssl3
+  291  openssl s_client -connect 10.124.0.97:443 -tls1
+  292  openssl s_client -connect 10.124.0.97:443 -tls1_1
+  293  openssl s_client -connect 10.124.0.97:443 -tls1_2
+  294  openssl s_client -connect 10.124.0.97:443 -tls1
+  295  openssl s_client -connect 10.124.0.97:443 -ssl3
+  296  openssl s_client -connect 10.124.0.97:8081 -ssl3
+  297  openssl s_client -connect 10.124.0.97:8081 -tls1
+  298  openssl s_client -connect 10.124.0.97:8081 -tls1_1
+  299  openssl s_client -connect 10.124.0.97:8081 -tls1_2
+  300  openssl s_client -connect 10.124.0.97:9090 -ssl3
+  301  openssl s_client -connect 10.124.0.97:9090 -tls1
+  302  openssl s_client -connect 10.124.0.97:9090 -tls1_1
+  303  openssl s_client -connect 10.124.0.97:9090 -tls1_2
+
+

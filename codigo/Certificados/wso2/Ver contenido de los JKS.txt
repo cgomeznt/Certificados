@@ -1,0 +1,1 @@
+for i in $(ls -la ./bancos/*.jks | grep -v *.credentials | awk '{print $9}') ; do PASS=`cat $i.credentials | awk '{print $2}'`; echo "###################" ; echo "$i" ; keytool -list -v -storepass $PASS -keystore $i ; done >> jks.txt

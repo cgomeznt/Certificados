@@ -1,0 +1,44 @@
+
+[root@srv-vwso2esb01]:/home/wso2/Certificados_WS_Bancos>ls
+certificados.sh  certificados.sh.bck  certificados_WS_Bancos.tar  entradas.txt  readme.txt
+[root@srv-vwso2esb01]:/home/wso2/Certificados_WS_Bancos>cat readme.txt
+# Este script se creó con la intención de facilitar la generación masiva de llaves para los bancos que consumiran los WS.
+ 
+# Para ejecutar el Script deben ejecutar la siguiente sentencia: sh certificados.sh entradas.txt
+# Este script recibe un archivo donde cada linea se encuentra separada por comas, con el siguiente formato:
+ 
+Alias del Certificado,Nombre del JKS.jks, Common Name Emitido (Nombre de la institución)
+ 
+ 
+Ejemplo:
+    Banco del Tesoro,Tesoro.jks,Banco del Tesoro C.A.
+    Banco Bicentenario,Bicentenario.jks,Banco Bicentenario C.A.
+    Banco Activo,Activo.jks,Banco Activo C.A.
+    BFC Fondo Comun,BFC.jks,BFC Fondo Comun C.A.
+    Banplus,Banplus.jks,Banplus C.A.
+ 
+ 
+# El resultado de la ejecución de este Script es un archivo tar que se llama certificados_WS_Bancos.tar que contiene 2 tipos de
+# Archivos:
+ 
+#       Archivos.jks                            ---> Son los Keystores como tal
+#       Archivo.jks.credentials                 ---> Contiene las claves para poder leer los archivos.
+                                                        Storepass: Clave para leer el keystore.
+                                                        Keypass: Clave para abrir el certificado.
+[root@srv-vwso2esb01]:/home/wso2/Certificados_WS_Bancos>ls -la
+total 56
+drwxrwxr-x 2 wso2 wso2  4096 Jan  3 16:31 ./
+drwxr-xr-x 5 wso2 wso2  4096 Jan  3 11:01 ../
+-rw-rw-r-- 1 wso2 wso2   910 Sep 26 12:25 certificados.sh
+-rw-rw-r-- 1 wso2 wso2   910 Sep 26 12:42 certificados.sh.bck
+-rw-rw-r-- 1 wso2 wso2 30720 Sep 26 12:40 certificados_WS_Bancos.tar
+-rw-rw-r-- 1 wso2 wso2   230 Sep 26 12:39 entradas.txt
+-rw-rw-r-- 1 wso2 wso2  1059 Sep 26 12:39 readme.txt
+[root@srv-vwso2esb01]:/home/wso2/Certificados_WS_Bancos>cat entradas.txt
+Banco del Tesoro,Tesoro.jks,Banco del Tesoro C.A.
+Banco Bicentenario,Bicentenario.jks,Banco Bicentenario C.A.
+Banco Activo,Activo.jks,Banco Activo C.A.
+BFC Fondo Comun,BFC.jks,BFC Fondo Comun C.A.
+Banplus,Banplus.jks,Banplus C.A.
+[root@srv-vwso2esb01]:/home/wso2/Certificados_WS_Bancos>
+ 

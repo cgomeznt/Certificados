@@ -1,0 +1,28 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+
+[req_distinguished_name]
+countryName = VE
+countryName_default = VE
+stateOrProvinceName = Miranda
+stateOrProvinceName_default = Miranda
+localityName = Caracas
+localityName_default = Caracas
+organizationalUnitName	= Criptografia
+organizationalUnitName_default	= Criptografia
+commonName = services.credicard.com.ve
+commonName_default = services.credicard.com.ve
+commonName_max	= 64
+
+[ v3_req ]
+# Extensions to add to a certificate request
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = mposqa.services.credicard.com.ve
+DNS.2 = mposdev.services.credicard.com.ve
+IP.1 = 10.134.3.61
+IP.2 = 10.134.4.62
