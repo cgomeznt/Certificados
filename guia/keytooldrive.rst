@@ -17,11 +17,12 @@ The CA would return with the certificate reply and the RootCA and sometimes an i
 Convert the cer to pem, remember if you want imort a key, is in a pem.::
 
 	cat certreq.cer > certreq.pem
+
 Import the certificates into the keystore, this can be done in two ways either by importing the certificates in an order of RootCA, intermediateCA and then Certificate reply. Or we can create a certificate chain clubbing them in an order into a .pem file.::
 
 	keytool -import -file certreq.pem -alias DUMMY -keystore MYKeystore.jks -storepass changeit
 
-To verify the contents of the keystore, you can use the below command,
+To verify the contents of the keystore, you can use the below command,::
 
 	keytool –list –v –keystore MYKeystore.jks -storepass  changeit
 
