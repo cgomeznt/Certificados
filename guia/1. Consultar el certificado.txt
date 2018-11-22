@@ -1,0 +1,58 @@
+Recuerda el password lo puedes ver en domain.xml
+
+keytool -list -v -keystore portalappclusprd.jks
+
+
+openssl rsa -in /etc/pki/tls/private/101-cert.key -check
+
+openssl req -text -noout -in slbbe.credicard.com.ve.csr
+
+
+openssl x509 -in certificado.pem -inform pem -noout -text
+
+
+openssl x509 -in Ldapclusprd.crt -noout -text
+
+
+
+
+
+[root@srv-vccs-ldap-01]:/etc/openldap/certs>openssl x509 -in Ldapclusprd.crt -noout -enddate
+notAfter=Oct 31 14:54:02 2018 GMT
+
+
+Cuando genere este error se le debe indicar el -inform
+error:0906D06C:PEM routines:PEM_read_bio:no start line:pem_lib.c:703:Expecting: TRUSTED CERTIFICATE
+
+
+Consultar un certificado de un servidor en especifico
+
+openssl s_client -connect localhost:9400 -CAfile /etc/ssl/ca.crt
+
+openssl s_client -connect 10.124.0.81:3636
+
+
+
+Consultar un certificado de un servidor en especifico y exportar el certificado publico
+
+echo -n | openssl s_client -connect 10.124.0.81:3636 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ldapserver.crt
+
+
+
+Consultar un certificado de un servidor en especifico su tipo de cifrado (cipher)
+
+openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -ssl2
+
+openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -ssl3
+
+openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -tls1
+
+openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -tls1_1
+
+openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -tls1_2
+
+
+
+Consultar un certificado de un servidor en especifico su valides de fecha
+
+openssl s_client -connect localhost:8443 -CAfile /etc/ssl/ca.crt 2> /dev/null  | openssl x509 -noout -dates

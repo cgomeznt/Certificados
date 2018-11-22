@@ -1,0 +1,346 @@
+mis-eferg22158cevenla
+
+# apache
+SSLProtocol all -SSLv2 -SSLv3
+SSLHonorCipherOrder on
+SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 \
+EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 \
+EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS"
+
+SSLProtocol ALL -SSLv2 -SSLv3
+SSLHonorCipherOrder On
+SSLCipherSuite ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5
+SSLCompression Off
+
+ciphers="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_RC4_128_SHA,
+TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA256,
+TLS_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_RC4_128_SHA"
+
+sslProtocol="TLSv1.2"
+
+ciphers="SSL_RSA_WITH_RC4_128_SHA, TLS_RSA_WITH_AES_128_CBC_SHA, 
+ TLS_DHE_RSA_WITH_AES_128_CBC_SHA, TLS_DHE_DSS_WITH_AES_128_CBC_SHA, 
+ SSL_RSA_WITH_3DES_EDE_CBC_SHA, SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA, 
+ SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA"
+
+# Configuración de Apache en WAS
+<VirtualHost *:443>
+SSLEnable
+SSLProtocolDisable SSLv2
+SSLProtocolDisable SSLv3
+SSLCipherSpec 3A
+SSLCipherSpec 2F
+SSLCipherSpec 35b
+</VirtualHost>
+
+
+35b TLS_RSA_WITH_AES_256_CBC_SHA
+2F TLS_RSA_WITH_AES_128_CBC_SHA
+3A SSL_RSA_WITH_3DES_EDE_CBC_SHA
+
+
+
+#############################################################################################################################
+EXAMPLES
+Verbose listing of all OpenSSL ciphers including NULL ciphers:
+
+openssl ciphers -v 'ALL:eNULL'
+Include all ciphers except NULL and anonymous DH then sort by strength:
+
+openssl ciphers -v 'ALL:!ADH:@STRENGTH'
+Include only 3DES ciphers and then place RSA ciphers last:
+
+openssl ciphers -v '3DES:+RSA'
+
+#############################################################################################################################
+
+openssl s_client -host 10.124.2.85 -port 443
+
+openssl s_client -connect 10.124.2.85:443 -tls1_2 
+
+
+Configurar el tlsv1.2 en el apache
+
+SSLProtocol -all +TLSv1.2
+
+-all is removing other ssl protocol (SSL 1,2,3 TLS1)
+
++TLSv1.2 is adding TLS 1.2
+
+for more browser compatibility you can use
+
+SSLProtocol -all +TLSv1 +TLSv1.1 +TLSv1.2
+by the way you can increase the Cipher suite too using:
+
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:ECDHE-RSA-AES128-SHA:DHE-RSA-AES128-GCM-SHA256:AES256+EDH:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GC$
+
+###################################################################################
+
+
+openssl s_client -connect 10.124.2.85:443 -tls1_2
+CONNECTED(00000003)
+depth=0 C = VE, ST = DC, L = Caracas, O = Credicard CA, OU = TI
+verify error:num=18:self signed certificate
+verify return:1
+depth=0 C = VE, ST = DC, L = Caracas, O = Credicard CA, OU = TI
+verify return:1
+---
+Certificate chain
+ 0 s:/C=VE/ST=DC/L=Caracas/O=Credicard CA/OU=TI
+   i:/C=VE/ST=DC/L=Caracas/O=Credicard CA/OU=TI
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIDczCCAlugAwIBAgIJAMK7DbG931cMMA0GCSqGSIb3DQEBCwUAMFAxCzAJBgNV
+BAYTAlZFMQswCQYDVQQIDAJEQzEQMA4GA1UEBwwHQ2FyYWNhczEVMBMGA1UECgwM
+Q3JlZGljYXJkIENBMQswCQYDVQQLDAJUSTAeFw0xNjEyMjYxODIxMzVaFw0xNzEy
+MjYxODIxMzVaMFAxCzAJBgNVBAYTAlZFMQswCQYDVQQIDAJEQzEQMA4GA1UEBwwH
+Q2FyYWNhczEVMBMGA1UECgwMQ3JlZGljYXJkIENBMQswCQYDVQQLDAJUSTCCASIw
+DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMvrvz1TTEYdWNIyK8rjC7eo5yXN
+AvxTy75kBVWBHe/CbO3DKQLoz77WDCQTXeeOm4Eom8xfMuYXBoRfonqb44lgX2uM
+hZLs0A53lMVZpgMJvQ1uuUDPzy93Mw3t/TBSJ0WqA35CZINZSWXS7s4y9dYyyi/u
+JEmJP9HRVK6p8rNAHb3stKp4gerTJAJlyLhqldMszjGvInbxdG6cxjEF4WCe9+Sk
+/KgKu853r05+MS5vFGziUR4vfMdsDui/zYVkgPED8wvmKMJVX/ucs77r6xx7t3d6
+XhPlXP8dAyjybfrXdq9SOMURVG84ikXIX+onEo5WyW6p+cpwBHfzVkw45OECAwEA
+AaNQME4wHQYDVR0OBBYEFCmzY/yOpM4w8MMHrUAvn0EOZHSjMB8GA1UdIwQYMBaA
+FCmzY/yOpM4w8MMHrUAvn0EOZHSjMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEL
+BQADggEBADHm/xA7lMbdsPp4MJ2bW5JAuG4W1QB4GohKTj34b0dGLiFr3CMArHAx
+lFFNNOoHXgycI4ADnXwTYeSCrbej9Orh2XXsrTV6sxaghas7yEp7u3TMVuDxPVKF
+cOK/EJRTtVB076ldvXjYVbFHziYQKfGplUvjuVNtD6LKPAQTLBjdbMVWJxdQamXV
+nZ7zuIxImpZqdXabTXsx/F1W3/eYfne9SV2bdggcUzQIs83AtwsCoxOyI0uwf8rI
+Up/orkC5Hc6DWKZcwKoTzghZhuFaTa7SkT0MW7uz40eKOwIpvtEYW2Mv8qhVlA2l
+LuDTQFGSU0FhXTNLXx5sCn5+WICQRNo=
+-----END CERTIFICATE-----
+subject=/C=VE/ST=DC/L=Caracas/O=Credicard CA/OU=TI
+issuer=/C=VE/ST=DC/L=Caracas/O=Credicard CA/OU=TI
+---
+No client certificate CA names sent
+Server Temp Key: ECDH, secp521r1, 521 bits
+---
+SSL handshake has read 1646 bytes and written 441 bytes
+---
+New, TLSv1/SSLv3, Cipher is ECDHE-RSA-AES256-GCM-SHA384
+Server public key is 2048 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+SSL-Session:
+    Protocol  : TLSv1.2
+    Cipher    : ECDHE-RSA-AES256-GCM-SHA384
+    Session-ID: C95075D6EF91C84779D1238EA4D12850C3BF1E6C7E4E20D75C930ACD6F37C023
+    Session-ID-ctx:
+    Master-Key: 5C0EE0FC83DA4A30E5E3C70B8D54E8C3B89B6DA412AAF05996B1496D2B5B05E1CE5631C6B5A1D0EF411E875DAB25B6F4
+    Key-Arg   : None
+    Krb5 Principal: None
+    PSK identity: None
+    PSK identity hint: None
+    TLS session ticket lifetime hint: 7200 (seconds)
+    TLS session ticket:
+    0000 - 7b bb f9 c8 e9 09 b4 8d-ab b2 33 48 fd 7c eb db   {.........3H.|..
+    0010 - ff bb 2a 7b 36 a0 2f 4e-bb 7a ed 4c e6 92 dd 5c   ..*{6./N.z.L...\
+    0020 - f3 84 5f 84 db a8 c2 d1-b1 86 4d 18 59 d7 5d 83   .._.......M.Y.].
+    0030 - 75 9b fe 76 7f a7 45 4d-81 e5 d8 16 58 33 60 5c   u..v..EM....X3`\
+    0040 - d5 bd 34 46 62 ab 04 e2-39 e3 4d 63 a9 6a 38 e0   ..4Fb...9.Mc.j8.
+    0050 - c8 10 36 89 da ea 5c f6-bc b1 f4 3c 2f 03 00 d0   ..6...\....</...
+    0060 - e9 0c e1 cd 14 62 08 4b-d5 25 aa d9 5f 6b 76 43   .....b.K.%.._kvC
+    0070 - 5b ef 7c 3a 7c 6d 4c bb-94 04 d7 ca 16 8e 81 57   [.|:|mL........W
+    0080 - 27 8c 40 21 51 9b 30 ef-4c dd 39 c6 0e 28 e8 ae   '.@!Q.0.L.9..(..
+    0090 - 29 cb 4c 79 96 b7 55 30-b8 1f f9 ae 96 3d 6b be   ).Ly..U0.....=k.
+    00a0 - aa c0 50 96 4c 43 42 03-a8 a3 0e 76 6e 06 31 c0   ..P.LCB....vn.1.
+    00b0 - f0 4b 12 90 72 da 7d a5-6c 65 a9 e7 56 58 60 3a   .K..r.}.le..VX`:
+
+    Start Time: 1485887272
+    Timeout   : 7200 (sec)
+    Verify return code: 18 (self signed certificate)
+---
+
+
+###################################################################################
+
+nmap --script ssl-enum-ciphers -p 443 10.124.2.85
+
+Starting Nmap 6.40 ( http://nmap.org ) at 2017-01-31 14:27 BOT
+Nmap scan report for lprdapplog01 (10.124.2.85)
+Host is up (2000s latency).
+PORT    STATE SERVICE
+443/tcp open  https
+| ssl-enum-ciphers:
+|   SSLv3: No supported ciphers found
+|   TLSv1.2:
+|     ciphers:
+|       TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 - strong
+|       TLS_DHE_RSA_WITH_AES_256_CBC_SHA - strong
+|       TLS_DHE_RSA_WITH_AES_256_CBC_SHA256 - strong
+|       TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 - strong
+|       TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA - strong
+|       TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 - strong
+|       TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA - strong
+|       TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 - strong
+|       TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 - strong
+|     compressors:
+|       NULL
+|_  least strength: strong
+
+Nmap done: 1 IP address (1 host up) scanned in 0.23 seconds
+
+####################################################################################
+
+#############
+
+# Probar el cipher suites y protocolos soportados en los servidores
+
+openssl s_client -cipher EXP-DES-CBC-SHA -connect 10.132.0.86:8904
+openssl s_client -cipher RC4-MD5 -connect 10.132.0.86:8904
+openssl s_client -cipher EXP-DES-CBC-SHA -connect 10.132.0.86:8905
+openssl s_client -cipher EXP-RC4-MD5 -connect 10.132.0.139:8905
+
+openssl s_client -connect 10.134.0.115:443 -cipher LOW:EXP
+openssl s_client -connect 10.132.0.86:8904 -cipher LOW:EXP
+openssl s_client -connect 10.132.0.86:8905 -cipher LOW:EXP
+
+openssl s_client -connect 10.132.0.86:443 -ssl3
+openssl s_client -connect 10.132.0.86:8904 -ssl3
+openssl s_client -connect 10.132.0.86:8904 -tls1
+openssl s_client -connect 10.124.0.81:443 -ssl3
+
+openssl s_client -cipher EXP-DES-CBC-SHA -connect 10.132.0.86:8905
+openssl s_client -cipher EXP-RC4-MD5 -connect 10.132.0.86:8905
+openssl s_client -cipher RC4-MD5 -connect 10.124.0.81:443
+
+openssl s_client -cipher EXP-DES-CBC-SHA -connect 10.132.0.86:8904
+openssl s_client -cipher EXP-DES-CBC-SHA -connect 10.133.0.11:8445
+openssl s_client -cipher EXP-RC4-MD5 -connect 10.132.0.86:8904
+
+openssl s_client -cipher EXP-RC4-MD5 -connect 10.132.0.87:8905
+openssl s_client -cipher EXP-DES-CBC-SHA -connect 10.132.0.87:8905
+
+############
+
+# Instalación de gskit en TAM
+
+installp -r PDJ.rte
+gsk7ver
+installp -a -g -X -d $PATCH <package>
+/opt/PolicyDirector/bin/pd_start stop
+/opt/PolicyDirector/bin/pd_start start
+
+# Cargar modulo reqtimeout en Apache
+LoadModule reqtimeout_module modules/mod_reqtimeout.so
+
+<IfModule reqtimeout_module>
+    RequestReadTimeout header=10-20,minrate=500
+    RequestReadTimeout body=10,minrate=500
+</IfModule>
+
+############
+
+/usr/java7_64/jre/lib/security 
+
+Cr3d1c4rd$ ---- jboss
+
+############
+
+# Modificar la configuración de la interfaz eth0
+vi /etc/sysconfig/network-scripts/route-eth0 --- rutas estaticas
+
+# Borrar las interfaces para volverlas a crear
+rm -f /etc/udev/rules.d/70-persistent-net.rules
+
+# Modificar el nombre del Host
+vi /etc/sysconfig/network
+
+# Logs de haproxy
+vim /etc/rsyslog.d/haproxy.conf
+
+###########
+
+<server-identities>
+<secret value="U2xhdmUxMjM0JA==" />
+</server-identities>
+
+
+<local default-user="$local"/>
+<interface name="public">
+            <inet-address value="${jboss.bind.address:10.124.2.24}"/>
+        </interface>
+
+  Order Deny,Allow
+      Deny from all
+      Allow from env=local_ref
+
+# Crear usuarios en Centos
+groupadd -g 20001 adminapp
+adduser -u 20006 -g 20001 -d /home/adiaz -c "Aquiles Diaz - Administrador App-Servicio" adiaz
+useradd -g soinfra -m -d /export/home/jmogro jmogro
+
+Create an LVM physical volume on partition /dev/sdb1.
+# pvcreate /dev/sdb1
+  Physical volume "/dev/sdb1" successfully created
+Create the volume group my_vg that consists of the physical volume /dev/sdb1.
+# vgcreate my_vg /dev/sdb1
+  Volume group "my_vg" successfully created
+Create a logical volume using the volume group my_vg.
+# lvcreate -L450 -n my_lv my_vg
+  Rounding up size to full physical extent 452.00 MiB
+  Logical volume "my_lv" created
+You can use the lvs command to display the logical volume.
+# lvs
+  LV      VG      Attr      LSize   Pool Origin Data%  Move Log Copy%  Convert
+  my_lv   my_vg   -wi-a---- 452.00m
+  ...
+Create an ext4 file system on the logical volume my_lv.
+# mkfs.ext4 /dev/my_vg/my_lv
+mke2fs 1.42.7 (21-Jan-2013)
+Filesystem label=
+OS type: Linux
+
+sslProtocol="TLSv1.2"
+
+EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED:!ECDSA:CAMELLIA256-SHA:AES256-SHA:CAMELLIA128-SHA:AES128-SHA
+
+vi /esa/conf/sslconfig
+vi /usr/ios/lpm/gui/httpd/conf/config.properties
+
+
+C = VE, ST = DC, L = Caracas, O = credicard.com.ve, OU = Infraestructura, CN = srv-vccs-portalapp-qa-01
+C = VE, ST = Distrito Capital, L = Caracas, O = "Consorcio Credicard, C.A.", OU = Infraestructura, CN = srv-vccs-portalapp-qa-01
+
+<interfaces>
+        <interface name="management">
+            <inet-address value="${jboss.bind.address.management:127.0.0.1}"/>
+        </interface>
+        <interface name="public">
+            <inet-address value="${jboss.bind.address:10.134.0.83}"/>
+        </interface>
+        <interface name="unsecure">
+            <inet-address value="${jboss.bind.address.unsecure:10.134.0.83}"/>
+        </interface>
+    </interfaces>
+
+gnutls-cli --priority SECURE256:+SECURE128:-VERS-TLS-ALL:+VERS-TLS1.2:-RSA:-DHE-DSS:-CAMELLIA-128-CBC:-CAMELLIA-256-CBC -l
+Cipher suites for SECURE256:+SECURE128:-VERS-TLS-ALL:+VERS-TLS1.2:-RSA:-DHE-DSS:-CAMELLIA-128-CBC:-CAMELLIA-256-CBC
+
+<connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" enable-lookups="false" secure="true">
+                    <ssl name="conf-ssl" password="BEI++EAL/SSD/74111" certificate-key-file="${jboss.domain.config.dir}/portalappclusqa.jks" protocol="TLSv1,TLSv1.1,TLSv1.2" ca-certificate-file="${jboss.domain.config.dir}/portalappclusqa.jks"/>
+</connector>
+
+
+tar xzf jdk-7u79-linux-x64.tar.gz
+cd /usr/java/jdk1.7.0_79
+alternatives --install /usr/bin/java java /usr/java/jdk1.7.0_79/bin/java 2
+alternatives --config java
+alternatives --install /usr/bin/jar jar /usr/java/jdk1.7.0_79/bin/jar 2
+alternatives --install /usr/bin/javac javac /usr/java/jdk1.7.0_79/bin/javac 2
+alternatives --set jar /usr/java/jdk1.7.0_79/bin/jar
+alternatives --set javac /usr/java/jdk1.7.0_79/bin/javac
+export JAVA_HOME=/usr/java/jdk1.7.0_79
+export JRE_HOME=/usr/java/jdk1.7.0_79/jre
+export PATH=$PATH:/usr/java/jdk1.7.0_79/bin:/usr/java/jdk1.7.0_79/jre/bin
+
+[root@srv-vccs-portalapp-qa-01]:/usr/java>rm -rf default
+[root@srv-vccs-portalapp-qa-01]:/usr/java>rm -rf latest/
+[root@srv-vccs-portalapp-qa-01]:/usr/java>ln -s /usr/java/jdk1.7.0_79 latest
+[root@srv-vccs-portalapp-qa-01]:/usr/java>ln -s /usr/java/latest default
+
+gsk_attribute_set_buffer (gskhandle, GSK_TLS_CIPHER_SPECS, 352F0A,0);
