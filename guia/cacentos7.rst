@@ -18,7 +18,7 @@ Crear la estructura de directorios donde se almacenará toda la información de 
 
 	# mkdir /opt/CA
 	# cd /opt/CA/
-	# mkdir certs newcerts private crl request keyservice
+	# mkdir certs newcerts private crl request keyservice conf
 
 
 * "CA" será el directorio de trabajo de la Autoridad Certificadora.
@@ -28,6 +28,7 @@ Crear la estructura de directorios donde se almacenará toda la información de 
 * "private" es el directorio donde se colocan las claves privadas (este directorio debe tener permisos extremadamente restrictivos, para que sólo sean leídos por root).
 * "request" es donde guardaremos los request para firmar los nuevos certificados.
 * "keyservice" Guardaremos los .key del los servidores o servicios.
+* "conf" es donde se guardaran los archivos de configuración y respuesta para crear los certificados.
 
 Las extensiones de archivos que se generarán en estos directorios serán las siguientes:
 
@@ -144,20 +145,20 @@ Al finalizar se crean dos archivos:
 
 Se deben crear permisos restrictivos sobre la clave privada::
 	
-	# chown root.root /opt/CA/private/srvutils.key
-	# chmod 0400 /opt/CA/private/srvutils.key
+	# chown root.root keyservice/srvutils.key
+	# chmod 0400 keyservice/srvutils.key
 
-O (por ejemplo si el certificado es para un servidor Apache):
+O (por ejemplo si el certificado es para un servidor Apache)::
 
-	# chown root.apache /opt/CA/private/srvutils.key
-	# chmod 0440 /opt/CA/private/srvutils.key
+	# chown root.apache keyservice/srvutils.key
+	# chmod 0440 keyservice/srvutils.key
 
 paso 4. crear el archivo de configuración
 ++++++++++++++++++++++++++++++++++++++++++
 
 Creamos este archivo para tener una administración mas amplia::
 
-	vi srvutils.conf
+	vi conf/srvutils.conf
 	[req]
 	distinguished_name = req_distinguished_name
 	req_extensions = v3_req
@@ -198,11 +199,12 @@ Paso 5. Firmar el Request de certificado para generar el certificado del servido
 
 A continuación firmamos el pedido de certificado para generar el certificado para el servidor o servicio::
 
-	# openssl x509 -req -days 185 -extfile srvutils.conf -extensions v3_req -CA certs/CA_empresa.crt -CAkey private/CA_empresa.key -CAserial ca.srl -CAcreateserial -in srvutils.csr -out certs/srvutils.crt 
+	# openssl x509 -req -days 185 -extfile conf/srvutils.conf -extensions v3_req -CA certs/CA_empresa.crt -CAkey private/CA_empresa.key -CAserial ca.srl -CAcreateserial -in request/srvutils.csr -out newcerts/srvutils.crt
 	Signature ok
 	subject=/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils
 	Getting CA Private Key
 	Enter pass phrase for private/CA_empresa.key:
+
 
 
 Si se coloca la opción "-policy policy_anything" indica que no se requiere que los campos "Country", "State" o "City", es para que coincidan con los de la CA.
