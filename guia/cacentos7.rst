@@ -18,7 +18,7 @@ Crear la estructura de directorios donde se almacenará toda la información de 
 
 	# mkdir /opt/CA
 	# cd /opt/CA/
-	# mkdir certs newcerts private crl
+	# mkdir certs newcerts private crl request keyservice
 
 
 * "CA" será el directorio de trabajo de la Autoridad Certificadora.
@@ -26,6 +26,8 @@ Crear la estructura de directorios donde se almacenará toda la información de 
 * "newcerts" es el directorio donde OpenSSL pone los certificados creados en formato PEM (sin encriptar) y en la forma [n° de serie].pem (por ejemplo: 15.pem).
 * "crl" es el directorio donde se coloca la lista de revocación de certificados.
 * "private" es el directorio donde se colocan las claves privadas (este directorio debe tener permisos extremadamente restrictivos, para que sólo sean leídos por root).
+* "request" es donde guardaremos los request para firmar los nuevos certificados.
+* "keyservice" Guardaremos los .key del los servidores o servicios.
 
 Las extensiones de archivos que se generarán en estos directorios serán las siguientes:
 
@@ -124,7 +126,7 @@ Paso 3. Creación del Request para el certificado
 
 La creación de un certificado para un servidor, lo primero que hacemos es generar su llave primaria y el Request para el certificado::
 
-	# openssl req -newkey rsa:2048 -nodes -keyout srvutils.key -out srvutils.csr -subj "/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils"
+	# openssl req -newkey rsa:2048 -nodes -keyout keyservice/srvutils.key -out request/srvutils.csr -subj "/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils"
 	Generating a 2048 bit RSA private key
 	.............................................................................................+++
 	.................................................................+++
