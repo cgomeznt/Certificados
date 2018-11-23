@@ -8,7 +8,7 @@ Se requiere configurar la primero CA para luego firmar los certificados de los c
 
 Instalar openssl::
 
-	sudo yum install openssl
+	# yum install openssl
 
 Paso 1. Crear la estructura de directorios donde crearemos los certificados
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -40,7 +40,7 @@ Para la configuración inicial de OpenSSL, copiamos el archivo de configuración
 	# cp /etc/pki/tls/openssl.cnf .
 	# chmod 0600 /CA/openssl.cnf
 
-Luego creamos dos archivos que funcionan como bases de datos para OpenSSL::
+Luego creamos dos archivos que funcionan como bases de datos y randon para OpenSSL::
 
 	# touch index.txt
 	# echo '01' > serial
@@ -50,10 +50,10 @@ Se necesitan algunas modificaciones en el archivo openssl.cnf, lo editamos y nos
 
 	####################################################################
 	[ ca ]
-	default_ca	= CA_default_EMPRESA		# The default ca section
+	default_ca	= CA_default_EMPRESA		# The default ca section <== CAMBIAR ESTA LINEA
 
 	####################################################################
-	[ CA_default_EMPRESA ]
+	[ CA_default_EMPRESA ]						<== CAMBIAR ESTA LINEA
 
 	dir		= /opt/CA		# Where everything is kept 	<== CAMBIAR ESTA LINEA
 	certs		= $dir/certs		# Where the issued certs are kept
@@ -63,7 +63,7 @@ Se necesitan algunas modificaciones en el archivo openssl.cnf, lo editamos y nos
 						# several ctificates with same subject.
 	new_certs_dir	= $dir/newcerts		# default place for new certs.
 
-	certificate	= $dir/CA_empresa.crt 	# The CA certificate		<== CAMBIAR ESTA LINEA
+	certificate	= $dir/certs/CA_empresa.crt 	# The CA certificate		<== CAMBIAR ESTA LINEA
 	serial		= $dir/serial 		# The current serial number
 	crlnumber	= $dir/crlnumber	# the current crl number
 						# must be commented out to leave a V1 CRL
@@ -75,7 +75,7 @@ Se necesitan algunas modificaciones en el archivo openssl.cnf, lo editamos y nos
 
 
 Se puede personalizar aún más para definir políticas para la creación y firmado de los certificados, o definir extensiones deseadas para nuevos certificados.
-Los certificados que vamos a crear con esta configuración, son certificados de propósito general.
+Los certificados que vamos a crear con esta configuración, son certificados de propósito general. (LDAP, Apache, WSO2, etc)
 
 
 Paso 2. Crear nuestra propia Entidad Certificadora (CA)
@@ -84,6 +84,7 @@ Paso 2. Crear nuestra propia Entidad Certificadora (CA)
 Después de terminar la configuración inicial, podemos crear un certificado auto-firmado que será utilizado como el certificado de nuestra CA. Este será utilizado para firmar las solicitudes de certificados::
 
 	# cd /opt/CA
+
 	# openssl req -config ./openssl.cnf -new -x509 -extensions v3_ca -days 3650 -keyout private/CA_empresa.key -out certs/CA_empresa.crt
 	Generating a 2048 bit RSA private key
 	.......................................................................+++
@@ -108,16 +109,22 @@ Después de terminar la configuración inicial, podemos crear un certificado aut
 	Email Address []:root@personal.local
 
 
+**NOTA:** No olvidar la clave que fijaron y resguardarla, porque siempre se estará utilizando cuando vayan a firmar los nuevos Request de certificados
+
 Se crearán dos archivos: certs/CA_empresa.crt, certificado de la CA públicamente disponible y con lectura para todo el mundo; private/CA_empresa.key, clave privada del certificado de la CA. A pesar de que está protegida por una contraseña se debe restringir el acceso::
 
 	# chmod 0400 /CA/private/CA_empresa.key
 
+
+Listo, hasta aquí tenemos nuestra entidad Certificadora completa...!!!!
+
+
 Paso 3. Creación del Request para el certificado
 +++++++++++++++++++++++++++++++++++++++++++++++
 
-La creación de un certificado para un servidor, lo primero que hacemos es generar su llave primaria y el Request de certificado:
+La creación de un certificado para un servidor, lo primero que hacemos es generar su llave primaria y el Request para el certificado::
 
-	[root@srvscmutils CA]# openssl req -newkey rsa:2048 -nodes -keyout srvutils.key -out srvutils.csr -subj "/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils"
+	# openssl req -newkey rsa:2048 -nodes -keyout srvutils.key -out srvutils.csr -subj "/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils"
 	Generating a 2048 bit RSA private key
 	.............................................................................................+++
 	.................................................................+++
@@ -125,7 +132,7 @@ La creación de un certificado para un servidor, lo primero que hacemos es gener
 	-----
 
 
-* La opción "nodes" es para que la clave privada no sea protegida con una passphrase. Si el certificado no se va a utilizarar para la autenticación de servidores, no se debería incluir en la opción anterior.
+* La opción "**nodes**" es para que la clave privada no sea protegida con una passphrase. Si el certificado no se utilizara para la autenticación de servidores, no se debería incluir en la opción anterior.
 * El "Common Name" (CN) es la información que identifica de forma única al servicio, por lo que debemos asegurarnos de escribirlo correctamente.
 
 Al finalizar se crean dos archivos:
@@ -135,13 +142,13 @@ Al finalizar se crean dos archivos:
 
 Se deben crear permisos restrictivos sobre la clave privada::
 	
-	# chown root.root /CA/private/srvutils.key
-	# chmod 0400 /CA/private/srvutils.key
+	# chown root.root /opt/CA/private/srvutils.key
+	# chmod 0400 /opt/CA/private/srvutils.key
 
 O (por ejemplo si el certificado es para un servidor Apache):
 
-	# chown root.apache /CA/private/srvutils.key
-	# chmod 0440 /CA/private/srvutils.key
+	# chown root.apache /opt/CA/private/srvutils.key
+	# chmod 0440 /opt/CA/private/srvutils.key
 
 paso 4. crear el archivo de configuración
 ++++++++++++++++++++++++++++++++++++++++++
@@ -184,10 +191,10 @@ Creamos este archivo para tener una administración mas amplia::
 
 
 
-Paso 5. Firma el Request de certificado para generar el certificado del servidor
+Paso 5. Firmar el Request de certificado para generar el certificado del servidor o servicio
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-A continuación firmamos el pedido de certificado para generar el certificado para el servidor::
+A continuación firmamos el pedido de certificado para generar el certificado para el servidor o servicio::
 
 	# openssl x509 -req -days 185 -extfile srvutils.conf -extensions v3_req -CA certs/CA_empresa.crt -CAkey private/CA_empresa.key -CAserial ca.srl -CAcreateserial -in srvutils.csr -out certs/srvutils.crt 
 	Signature ok
@@ -196,33 +203,36 @@ A continuación firmamos el pedido de certificado para generar el certificado pa
 	Enter pass phrase for private/CA_empresa.key:
 
 
-Si se coloca la opción "-policy policy_anything" indica que no se requiere que los campos "Country", "State" o "City" coincidan con los de la CA.
+Si se coloca la opción "-policy policy_anything" indica que no se requiere que los campos "Country", "State" o "City", es para que coincidan con los de la CA.
 
 Al finalizar se crean dos nuevos archivos:
 
 * certs/srvutils.crt: Certificado del servidor, que puede hacerse públicamente disponible.
 
-En este momento podemos eliminar el pedido de certificado, el cual no necesitaremos más (apachessl.csr)::
+En este momento podemos eliminar el Request del certificado, el cual no necesitaremos más (srvutils.csr)::
 
-	# rm –f /CA/srvutils.csr 
+	# rm –f /opt/CA/srvutils.csr 
+
 
 Paso 6. Creación de un archivo pkcs12 para instalar en navegadores
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Generar un archivo pkcs12, listo para ser cargado en los navegadores que necesitemos que tengan acceso a nuestro sitio.
 
+
 Paso 7. Copiando nuestros certificados a sus directorios destino
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-En el servidor:
+En el servidor en donde queremos tener los certificados y llaves:
 
 * CA_empresa.crt y CA_empresa.key : estos dos archivos forman el certificado correspondiente a nuestra Entidad Certificadora (CA). En mi servidor Debian, hay que copiar el certificado público (extensión .crt) a /etc/ssl/certs y la clave privada (extensión .key) a /etc/ssl/private.
 * srvutils.crt y srvutils.key: estos dos archivos forman el certificado correspondiente al servidor, firmado por nuestra Entidad Certificadora. Como antes, debemos de copiar el certificado público (extensión .crt) a /etc/ssl/certs y la clave privada (extensión .key) a /etc/ssl/private.
 ::
 
-	# cp certs/* /etc/httpd/conf.d
-	# cp private/CA_empresa.key /etc/httpd/conf.d
+	# cp certs/CA_empresa.crt /etc/httpd/conf.d
+	# cp certs/srvutils.crt /etc/httpd/conf.d
+	# cp private/srvutils.key /etc/httpd/conf.d
 
 En apache creamos un VHost y tendria esto::
 
@@ -239,8 +249,8 @@ En apache creamos un VHost y tendria esto::
 		# --- opciones varias (mirar en http://httpd.apache.org/docs/2.2/mod/mod_ssl$
 		# SSLProtocol -all +SSLv3
 		# SSLCipherSuite SSLv3:+HIGH:+MEDIUM
-		 ErrorLog logs/monitoreo.consis.local_error.log
-		 CustomLog logs/monitoreo.consis.local_requests.log common
+		 ErrorLog logs/monitoreo.empresa.local_error.log
+		 CustomLog logs/monitoreo.empresa.local_requests.log common
 	</VirtualHost>
 
 
@@ -249,7 +259,7 @@ En cada navegador del sitio de trabajo:
 * Primeramente tendremos que importar el certificado de nuestra Entidad Certificadora. Por ejemplo, para hacerlo en Firefox hay que ir a Herramientas -> Opciones -> Avanzado -> Certificados -> Ver certificados -> Importar y una vez allí importar el archivo CA_empresa.crt que (recuerda) contiene la clave pública de nuestra Entidad Certificadora.
 * Acto seguido, tenemos que importar también el certificado pkcs12 que contiene el certificado de nuestro servidor (en el ejemplo que os he puesto: apachessl_pck12.p12)
 
-Si tenemos directorio Activo de Microsoft se despliega por las politicas.
+Si tenemos directorio Activo de Microsoft se despliega por las políticas.
 
 Paso 8. Verificar el certificado desde un navegador
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
