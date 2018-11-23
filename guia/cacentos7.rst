@@ -215,7 +215,7 @@ Al finalizar se crean dos nuevos archivos:
 
 En este momento podemos eliminar el Request del certificado, el cual no necesitaremos más (srvutils.csr)::
 
-	# rm –f /opt/CA/srvutils.csr 
+	# rm –f request/srvutils.csr 
 
 
 Paso 6. Creación de un archivo pkcs12 para instalar en navegadores
@@ -235,8 +235,8 @@ En el servidor en donde queremos tener los certificados y llaves:
 ::
 
 	# cp certs/CA_empresa.crt /etc/httpd/conf.d
-	# cp certs/srvutils.crt /etc/httpd/conf.d
-	# cp private/srvutils.key /etc/httpd/conf.d
+	# cp newcerts/srvutils.crt /etc/httpd/conf.d
+	# cp keyservice/srvutils.key /etc/httpd/conf.d
 
 En apache creamos un VHost y tendria esto::
 
