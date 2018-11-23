@@ -53,7 +53,7 @@ Linux (Ubuntu, Debian)
 
 Añadir
 
-Copiar su CA a dir /usr/local/share/ca-certificates/
+Copiar su CA a dir /usr/local/share/ca-certificates/mozilla
  
 
 Utilice el comando::
@@ -86,7 +86,7 @@ Quitar
 Retire su CA.
 
 
-Actualización de la tienda de CA:;
+Actualización de la tienda de CA::
 
 	update-ca-certificates --fresh
 
@@ -99,29 +99,27 @@ Linux (CentOs 6)
 
 Añadir
 
- 
+Instalar el paquete de certificados de ca::
 
-Instalar el paquete de certificados de ca:
-
-yum install ca-certificates
+	yum install ca-certificates
 
  
 
-Habilitar la característica de configuración dinámica de CA:
+Habilitar la característica de configuración dinámica de CA::
 
-update-ca-trust force-enable
-
- 
-
-Agregar como un nuevo archivo en /etc/pki/ca-trust/source/anchors /:
-
-cp foo.crt /etc/pki/ca-trust/source/anchors/
+	update-ca-trust force-enable
 
  
 
-Utilice el comando:
+Agregar como un nuevo archivo en /etc/pki/ca-trust/source/anchors /::
 
-update-ca-trust extract
+	cp foo.crt /etc/pki/ca-trust/source/anchors/
+
+ 
+
+Utilice el comando::
+
+	update-ca-trust extract
 
 
  
@@ -135,7 +133,7 @@ Añadir
 
  
 
-Anexar el certificado de confianza para presentar /etc/pki/tls/certs/ca-bundle.crt
+Anexar el certificado de confianza para presentar /etc/pki/tls/certs/ca-bundle.crt::
 
-cat foo.crt >> /etc/pki/tls/certs/ca-bundle.crt
+	cat foo.crt >> /etc/pki/tls/certs/ca-bundle.crt
 
