@@ -141,8 +141,8 @@ Anexar el certificado de confianza para presentar /etc/pki/tls/certs/ca-bundle.c
 
 
 
-Navegador (Firefox, Chromium,…)
-++++++++++++++++++++++++++++++++
+Para los Navegador (Firefox, Chrome, Chromium,…)
+++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Los navegadores web como Firefox, Chromium, Google Chrome e incluso los clientes de correo electrónico como Mozilla Thunderbird no hacen uso del almacén de confianza del sistema operativo, sino que utilizan su propio almacén de confianza de certificados. Estos almacenes de confianza son archivos en el directorio de usuario, llamados "**cert8.db**" y "**cert9.db**" (para las versiones más recientes). Puede modificar los archivos del almacén de confianza utilizando la herramienta "certutil". 
 
