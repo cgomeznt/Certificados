@@ -130,7 +130,7 @@ La creación de un certificado para un servidor, lo primero que hacemos es gener
 	Generating a 2048 bit RSA private key
 	.............................................................................................+++
 	.................................................................+++
-	writing new private key to 'srvutils.key'
+	writing new private key to 'srvutils.key' 
 	-----
 
 
