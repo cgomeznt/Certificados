@@ -44,6 +44,7 @@ Luego creamos dos archivos que funcionan como bases de datos para OpenSSL::
 
 	# touch index.txt
 	# echo '01' > serial
+	# openssl rand -out private/.rand 1000
 
 Se necesitan algunas modificaciones en el archivo openssl.cnf, lo editamos y nos debe quedar así::
 
@@ -205,12 +206,12 @@ En este momento podemos eliminar el pedido de certificado, el cual no necesitare
 
 	# rm –f /CA/srvutils.csr 
 
-Paso 5. Creación de un archivo pkcs12 para instalar en navegadores
+Paso 6. Creación de un archivo pkcs12 para instalar en navegadores
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Generar un archivo pkcs12, listo para ser cargado en los navegadores que necesitemos que tengan acceso a nuestro sitio.
 
-Paso 6. Copiando nuestros certificados a sus directorios destino
+Paso 7. Copiando nuestros certificados a sus directorios destino
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
@@ -243,13 +244,33 @@ En apache creamos un VHost y tendria esto::
 	</VirtualHost>
 
 
-En cada navegador que querais que tenga acceso a vuestro sitio web:
+En cada navegador del sitio de trabajo:
 
 * Primeramente tendremos que importar el certificado de nuestra Entidad Certificadora. Por ejemplo, para hacerlo en Firefox hay que ir a Herramientas -> Opciones -> Avanzado -> Certificados -> Ver certificados -> Importar y una vez allí importar el archivo CA_empresa.crt que (recuerda) contiene la clave pública de nuestra Entidad Certificadora.
 * Acto seguido, tenemos que importar también el certificado pkcs12 que contiene el certificado de nuestro servidor (en el ejemplo que os he puesto: apachessl_pck12.p12)
 
+Si tenemos directorio Activo de Microsoft se despliega por las politicas.
 
-Paso 7. Otras operaciones con los certificados generados
+Paso 8. Verificar el certificado desde un navegador
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Esto los vamos hacer solo de forma visual para que se entienda más, en la estación de trabajo asumimos que ya tiene la CA "CA_empresas.crt" que se coloco de forma manual o de otra forma se desplegó.
+
+Nos vamos al navegador y colocamos en el URL la ruta en este caso es "https://monitoreo.empresa.local"
+
+.. figure:: ../images/01.png
+
+
+Vemos que el certificado es valido y fue comprobado contra la "CA_empresas.crt" que esta en la estación de trabajo.
+
+.. figure:: ../images/02.png
+
+Aquí vemos como se vería el certificado.
+
+.. figure:: ../images/03.png
+
+
+Paso 9. Otras operaciones con los certificados generados
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Si queremos consultar nuestro certificado, podremos consultarlo con el siguiente comando::
@@ -284,4 +305,6 @@ Si deseamos que un certificado deje de ser válido (Revocarlo) debemos revocarlo
 
 	# openssl ca –config openssl.cnf –revoke certs/srvutils.crt
 
-El certificado de nuestra CA y nuestra lista de revocación (CRL) deben ser distribuidos a aquellos que confíen en nuestra CA para que puedan importarlos en el software cliente (web browser, clientes ftp, clientes de email, etc). Además la CRL debe ser pública. Si queréis mas información sobre el estándar de Infraestructura de Clave Pública, quizás os interese visitar el siguiente enlace: Wikipedia: Infraestructura de clave pública.
+El certificado de nuestra CA y nuestra lista de revocación (CRL) deben ser distribuidos a aquellos que confíen en nuestra CA para que puedan importarlos en el software cliente (web browser, clientes ftp, clientes de email, etc). Además la CRL debe ser pública. Mas información sobre el estándar de Infraestructura de Clave Pública: Wikipedia: Infraestructura de clave pública.
+
+http://es.wikipedia.org/wiki/Infraestructura_de_clave_p%C3%BAblica
