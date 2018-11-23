@@ -186,3 +186,38 @@ Con este pequeño script importa el nuevo certificado raíz en las bases de dato
 
 
 Después de la ejecución de este script, su CA raíz debe ser conocida por Firefox, Chrome, Chromium, Vivaldy y otros navegadores.
+
+
+Una manera de realizar las pruebas es con el curl. Si aun no instala el certificado de la CA, se vera algo como esto::
+
+	curl https://monitoreo.empresa.local
+
+	curl: (60) Peer's certificate issuer has been marked as not trusted by the user.
+	More details here: http://curl.haxx.se/docs/sslcerts.html
+
+	curl performs SSL certificate verification by default, using a "bundle"
+	 of Certificate Authority (CA) public keys (CA certs). If the default
+	 bundle file isn't adequate, you can specify an alternate file
+	 using the --cacert option.
+	If this HTTPS server uses a certificate signed by a CA represented in
+	 the bundle, the certificate verification probably failed due to a
+	 problem with the certificate (it might be expired, or the name might
+	 not match the domain name in the URL).
+	If you'd like to turn off curl's verification of the certificate, use
+	 the -k (or --insecure) option.
+
+Después de instalar el certificado de la CA, ahí si podrá ver todo bien::
+
+	curl https://monitoreo.consis.local
+	<html>
+	  <head>
+		<title>monitoreo.empresa.local</title>
+	  </head>
+	  <body>
+		<h1>Felicitaciones, se creo el Virtual Host de monitoreo.empresa.local</h1>
+	  </body>
+	</html>
+
+Y por supuesto desde un navegador debe abrir y mostrar la pagina sin ningún tipo de Warning o Error en el certificado
+
+	.. figure:: ../images/04.png
