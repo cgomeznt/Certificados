@@ -5,7 +5,7 @@ Java Cryptography Extensión (JCE) es un plugin del JRE de Java con funciones cr
 
 Descargar la extensión. Accedemos a la página de Oracle,https://www.oracle.com/java/technologies/javase-jce8-downloads.html aceptamos los términos y **descargamos el ZIP**.
 
-Una vez descargada la app, extraemos los archivos 
+Una vez descargada la app, extraemos los archivos::
 
 	# unzip jce_policy-8.zip
 	Archive:  jce_policy-8.zip

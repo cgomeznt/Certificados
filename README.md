@@ -4,7 +4,7 @@
 * [Agregar certificados raíz de confianza en los servidores](guia/addcertificaterootserver.rst)
 * [Nuestra propia CA en Centos](guia/cacentos.rst) 
 * [Manejo de certificados con keytool](guia/keytooldrive.rst)
-* [Importar un Certificado de una CA en el cacerts de la JdDK](guia/importarCAtocacerts.rst)
+* [Importar un Certificado de una CA en el cacerts de la JDK](guia/importarCAtocacerts.rst)
 * [Instalar Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files](guia/JCE.rst)
 
 
