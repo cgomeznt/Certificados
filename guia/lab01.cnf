@@ -1,0 +1,32 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+
+
+[req_distinguished_name]
+countryName = VE
+countryName_default = VE
+stateOrProvinceName = Distrito Capital
+stateOrProvinceName_default = Distrito Capital
+localityName = Caracas
+localityName_default = Caracas
+organizationName = EMPRESA International CA
+organizationName_default = EMPRESA International CA
+organizationalUnitName	= Criptografia
+organizationalUnitName_default	= Criptografia
+commonName = srvscmutils.EMPRESA.local
+commonName_default = monitoreo.EMPRESA.local
+commonName_max	= 64
+
+
+[ v3_req ]
+# Extensions to add to a certificate request
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+
+
+[alt_names]
+DNS.1 = srvscmutils.EMPRESA.local
+DNS.2 = monitoreo.EMPRESA.local
+IP.1 = 192.168.0.21
