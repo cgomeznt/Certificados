@@ -54,12 +54,12 @@ Linux (Ubuntu, Debian)
 
 Añadir
 
-Copiar su CA a dir /usr/local/share/ca-certificates/mozilla
+Copiar su CA a dir /usr/local/share/ca-certificates/
  
 
 Utilice el comando::
 
-	cp CA_empresa.crt /usr/local/share/ca-certificates/mozilla/CA_empresa.crt
+	cp CA_empresa.crt /usr/local/share/ca-certificates/
 
 Agreguelo en el archivo esto "mozilla/CA_empresa.crt"::
 
@@ -93,7 +93,7 @@ Actualización de la tienda de CA::
 
  
 
-Linux (CentOs 6)
+Linux (CentOs 6 / 7)
 +++++++++++++++++
 
  
@@ -120,7 +120,7 @@ Agregar como un nuevo archivo en /etc/pki/ca-trust/source/anchors /::
 
 Utilice el comando::
 
-	update-ca-trust extract
+	update-ca-trust 
 
 
  
