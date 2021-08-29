@@ -542,6 +542,10 @@ Este otro link puede ser de interés.
 
 https://github.com/cgomeznt/Certificados/blob/master/guia/NavegadoresTrustedRoot.rst
 
+Este otro link explica como hacer un troubleshooting y aclara los fundamentos.
+
+https://github.com/cgomeznt/Certificados/blob/master/guia/openssl_verificar-URL_su_certificado_publico_CA.rst
+
 
 
 **NOTA** En caso de emergencia si requerimos cambiar el password, si al private key le colocaron una clave distinta a la del KeyStore, por ejemplo Venezuela21, podemos modificar esta clave y colocar una igual al KeyStore.
