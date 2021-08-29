@@ -492,7 +492,7 @@ Abrimos el certificado y vemos quien lo firmo.
 
 .. figure:: ../images/keystore/02.png
 
-Nos vamos al botón ver certificado para tener un más detalle del certificado publico de la CA que necesitamos.
+Nos vamos al botón ver certificado para tener más detalle del certificado publico de la CA que necesitamos.
 
 .. figure:: ../images/keystore/03.png
 
@@ -522,7 +522,11 @@ Nos vamos nuevamente a la URL y vemos que ahora si se produce de forma exitosa e
 
 .. figure:: ../images/keystore/08.png
 
-En el siguiente link explica como publicar el certificado publico de la CA en un servidor.
+
+
+
+
+En el siguiente link explica como importar dentro de un servidor el certificado publico de la CA.
 
 https://github.com/cgomeznt/Certificados/blob/master/guia/addcertificaterootserver.rst
 
@@ -532,56 +536,3 @@ https://github.com/cgomeznt/Certificados/blob/master/guia/NavegadoresTrustedRoot
 
 
 
-
-openssl pkcs12 -export -name srvutils.local -in srvutils.crt -inkey srvutils.key -chain -CAfile CA_empresa.crt -out srvutils.p12
-
-keytool -importkeystore -deststorepass changeit -destkeystore keystore.jks -srckeystore srvutils.p12 -srcstoretype PKCS12
-
-openssl pkcs12 -export -name srvutils-private-key -in srvutils.crt -inkey srvutils.key -out srvutils.p12
-
-openssl pkcs12 -info -in srvutils.p12
-
-keytool -delete -noprompt -alias srvutils-key  -keystore keystore.jks -storepass changeit
-
-Use Java keytool to convert from JKS to P12...
-==================
-
-Export from keytool's proprietary format (called "JKS") to standardized format PKCS #12:
-
-	keytool -importkeystore \
-	    -srckeystore keystore.jks \
-	    -destkeystore keystore.p12 \
-	    -deststoretype PKCS12 \
-	    -srcalias <jkskeyalias> \
-	    -deststorepass <password> \
-	    -destkeypass <password>
-
-keytool -importkeystore \
-	    -srckeystore keystore.jks \
-	    -destkeystore srvutils.p12 \
-	    -deststoretype PKCS12 \
-	    -srcalias srvutils-key \
-	    -deststorepass venezuela21 \
-	    -destkeypass venezuela21
-
-...then use openssl to export from P12 to PEM
-Export certificate using openssl::
-
-	openssl pkcs12 -in keystore.p12  -nokeys -out srvutils.key
-
-Export unencrypted private key::
-
-	openssl pkcs12 -in keystore.p12  -nodes -nocerts -out key.pem
-
-Export the certificate.
-
-	keytool -export -alias teiid -keystore server.keystore -rfc -file public.cert
-
-
-
-
-keytool -importkeystore -destkeystore keystore.jks -srckeystore srvutils.p12 -srcstoretype pkcs12 -alias srvutils-private-key
-
-keytool -import -alias srvutils-certificate -file srvutils.crt  -keystore keystore.jks -storepass changeit 
-
-keytool -import -trustcacerts -alias ca-certificate -file CA_empresa.crt -keystore keystore.jks -storepass changeit
