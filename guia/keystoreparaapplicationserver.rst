@@ -466,6 +466,70 @@ Publicar el Java KeyStore
 
 El Java KeyStore creado ahora debe ser entregado y publicado dentro del **Application Server** (Tomcat, JBoss, Glasfish, Weblogic, WebSphere, etc.)
 
+Puede leer los siguientes link para hacer la publicación en un JBoss o Tomcat.
+
+https://github.com/cgomeznt/JBOSS/blob/master/guia/ssl7x.rst
+
+https://github.com/cgomeznt/Tomcat/blob/master/guia/ssl.rst
+
+
+
+Cómo aceptar certificados en el navegador
++++++++++++++++++++++++++++++++++++++++
+
+
+Un application server que en su sitio web utiliza SSL, proporciona a los navegadores un certificado que certifica su identidad. Este certificado contiene información, el cual el navegador confirma su validez por medio de los certificados root server de confianza que tiene en su repositorio de certificados. Al comprobar que el certificado es valido, se confirma que has accedido al sitio de forma segura y ha establecido una conexión SSL.
+
+En resumen del lado de los navegadores siempre se debe tener en el repositorio certificados root server de confianza, el certificado publico de la CA que firmo el certificado que esta expuesto en el Application Server.
+
+Para demostrar lo antes dicho hagamos lo siguiente, con un navegador preferiblemente FIREFOX lo abrimos y vamos hasta la URL de nuestro sitio Web, podremos ver que es un lugar inseguro. 
+
+.. figure:: ../images/keystore/01.png
+
+
+Abrimos el certificado y vemos quien lo firmo.
+
+
+.. figure:: ../images/keystore/02.png
+
+Nos vamos al botón ver certificado para tener un más detalle del certificado publico de la CA que necesitamos.
+
+.. figure:: ../images/keystore/03.png
+
+Ya cuando tengamos el detalle y sabemos cual es el certificado publico de la CA, buscamos cualquier técnica y descargamos el certificado. Cuando lo tengamos le vamos a indicar al FIREFOX que lo importe en su repositorio de certificados de confianza. Y para hacerlo nos vamos a Preferencias, en Privacidad y Seguridad, buscamos certificados.
+
+
+.. figure:: ../images/keystore/04.png
+
+
+
+Luego le damos Ver certificados y buscamos el botón importar
+
+.. figure:: ../images/keystore/05.png
+
+
+Buscamos el certificado publico de la CA, lo seleccionamos y le damos aceptar y listo ya estará en el repositorio de certificados de confianza de FIREFOX
+
+.. figure:: ../images/keystore/06.png
+
+Seleccionamos el botón de Editar Confianza y marcamos los dos (2) check y listo ya tenemos la configuración requerida.
+
+
+.. figure:: ../images/keystore/07.png
+
+
+Nos vamos nuevamente a la URL y vemos que ahora si se produce de forma exitosa el Handcheck y el navegador ve seguro el certificado.
+
+.. figure:: ../images/keystore/08.png
+
+En el siguiente link explica como publicar el certificado publico de la CA en un servidor.
+
+https://github.com/cgomeznt/Certificados/blob/master/guia/addcertificaterootserver.rst
+
+Este otro link puede ser de interés.
+
+https://github.com/cgomeznt/Certificados/blob/master/guia/NavegadoresTrustedRoot.rst
+
 
 
 
