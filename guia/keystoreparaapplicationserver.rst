@@ -482,6 +482,20 @@ Un application server que en su sitio web utiliza SSL, proporciona a los navegad
 
 En resumen del lado de los navegadores siempre se debe tener en el repositorio certificados root server de confianza, el certificado publico de la CA que firmo el certificado que esta expuesto en el Application Server.
 
+Para instalar el certificado de la CA en CentOS 7::
+
+	# cp CA_certificado.crt /etc/pki/ca-trust/source/anchors/
+	# update-ca-trust
+
+Para instalar en el certificado de la CA en Windows::
+
+	win+r certmgr.msc
+	En el marco izquierdo, expanda Entidades de Certificacion raíz de confianza, haga clic con el botón derecho en Certificados y seleccione Todas las tareas >Importar, selecciones CA_certificado.crt
+
+Con lo anterior el Internet Explorer y Google utilizaran dicha CA, pero Firefox NO.
+
+En Firefox hay que ir a Herramientas -> Opciones -> Avanzado -> Certificados -> Ver certificados -> Importar y una vez allí importar el archivo CA_certificado.crt
+
 Para demostrar lo antes dicho hagamos lo siguiente, con un navegador preferiblemente FIREFOX lo abrimos y vamos hasta la URL de nuestro sitio Web, podremos ver que es un lugar inseguro. 
 
 .. figure:: ../images/keystore/01.png
