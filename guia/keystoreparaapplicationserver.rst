@@ -354,7 +354,7 @@ Agregar el certificado publico de la CA dentro del keystore::
 
 
 
-Consultamos el keystore y debemos ver las entrada de la private keyy el certificado publico de la CA::
+Consultamos el keystore y debemos ver las entrada de la private key y el certificado publico de la CA::
 
 	# keytool -list -v -keystore keystore.jks -storepass changeit
 
@@ -474,7 +474,7 @@ Cómo aceptar certificados en el navegador
 
 Un application server que en su sitio web utiliza SSL, proporciona a los navegadores un certificado que certifica su identidad. Este certificado contiene información, el cual el navegador confirma su validez por medio de los certificados root server de confianza que tiene en su repositorio de certificados. Al comprobar que el certificado es valido, se confirma que has accedido al sitio de forma segura y ha establecido una conexión SSL.
 
-En resumen del lado de los navegadores siempre se debe tener en el repositorio certificados root server de confianza, el certificado publico de la CA que firmo el certificado que esta expuesto en el Application Server.
+En resumen, del lado de los navegadores siempre se debe tener en el repositorio de certificados root server de confianza, el certificado publico de la CA que firmo el certificado que esta expuesto en el Application Server.
 
 Para instalar el certificado de la CA en CentOS 7::
 
@@ -544,7 +544,13 @@ https://github.com/cgomeznt/Certificados/blob/master/guia/NavegadoresTrustedRoot
 
 
 
-**NOTA** En caso de emergencia si requerimos cambiar el password
+**NOTA** En caso de emergencia si requerimos cambiar el password, si al private key le colocaron una clave distinta a la del KeyStore, por ejemplo Venezuela21, podemos modificar esta clave y colocar una igual al KeyStore.
 
-	keytool -keypasswd -new changeit -keystore cacerts -storepass changeit -alias someapp -keypass password
+Como saber si deben utilizarla, si ven un error como este::
+
+	Caused by: java.security.UnrecoverableKeyException: Cannot recover key
+
+Entonces para solventar seria::
+
+	keytool -keypasswd -new changeit -keystore keystore.jks -storepass changeit -alias srvutils-key -keypass Venezuela21
 
