@@ -104,13 +104,7 @@ Firmar el Request para generar el certificado del servidor o servicio.
 
 A continuación firmamos el pedido de certificado para generar el certificado para el servidor o servicio, esto se hace en la Entidad Certificadora::
 
-	# openssl req -newkey rsa:2048 -nodes -keyout keyservice/srvutils.key -out request/srvutils.csr -subj "/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils"
-	Generating a 2048 bit RSA private key
-	.........................................+++
-	..........+++
-	writing new private key to 'keyservice/srvutils.key'
-	-----
-	[root@appserver CA]# chmod 0400 keyservice/srvutils.key
+
 	[root@appserver CA]# openssl x509 -req -days 185 -extfile conf/srvutils.conf -extensions v3_req -CA certs/CA_empresa.crt -CAkey private/CA_empresa.key -CAserial ca.srl -CAcreateserial -in request/srvutils.csr -out newcerts/srvutils.crt
 	Signature ok
 	subject=/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils
@@ -549,4 +543,8 @@ Este otro link puede ser de interés.
 https://github.com/cgomeznt/Certificados/blob/master/guia/NavegadoresTrustedRoot.rst
 
 
+
+**NOTA** En caso de emergencia si requerimos cambiar el password
+
+	keytool -keypasswd -new changeit -keystore cacerts -storepass changeit -alias someapp -keypass password
 
