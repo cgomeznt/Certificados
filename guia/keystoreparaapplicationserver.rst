@@ -28,18 +28,19 @@ Los pasos son los siguientes:
 
 
 Se debe tener una Entidad Certificadora para crear la llave y el request, para luego firmarlo con el certificado publico de la CA. Ver el siguiente link para crear una Entidad Certificadora (SI aun no la tiene) https://github.com/cgomeznt/Certificados/blob/master/guia/cacentos7.rst
- Esto seria como lo siguiente. 
+
 
 Crear la Private Key y generar el Request
 +++++++++++++++++++++++++++++++++++++++++++++++
 
-Se debe generar un Private Key con el Request::
+Se debe generar un Private Key con el Request, esto se hace en la Entidad Certificadora::
 
 	# openssl req -newkey rsa:2048 -nodes -keyout keyservice/srvutils.key -out request/srvutils.csr -subj "/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils"
+
 	Generating a 2048 bit RSA private key
-	.............................................................................................+++
-	.................................................................+++
-	writing new private key to 'srvutils.key' 
+	.........................................+++
+	..........+++
+	writing new private key to 'keyservice/srvutils.key'
 	-----
 
 
@@ -60,7 +61,7 @@ Se deben crear permisos restrictivos sobre la clave privada::
 Crear el archivo de configuración
 ++++++++++++++++++++++++++++++++++++++++++
 
-Creamos este archivo para tener una administración mas amplia::
+Creamos este archivo para tener una administración mas amplia, esto se hace en la Entidad Certificadora::
 
 	vi conf/srvutils.conf
 	[req]
@@ -101,13 +102,21 @@ Creamos este archivo para tener una administración mas amplia::
 Firmar el Request para generar el certificado del servidor o servicio.
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 
-A continuación firmamos el pedido de certificado para generar el certificado para el servidor o servicio::
+A continuación firmamos el pedido de certificado para generar el certificado para el servidor o servicio, esto se hace en la Entidad Certificadora::
 
-	# openssl x509 -req -days 185 -extfile conf/srvutils.conf -extensions v3_req -CA certs/CA_empresa.crt -CAkey private/CA_empresa.key -CAserial ca.srl -CAcreateserial -in request/srvutils.csr -out newcerts/srvutils.crt
+	# openssl req -newkey rsa:2048 -nodes -keyout keyservice/srvutils.key -out request/srvutils.csr -subj "/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils"
+	Generating a 2048 bit RSA private key
+	.........................................+++
+	..........+++
+	writing new private key to 'keyservice/srvutils.key'
+	-----
+	[root@appserver CA]# chmod 0400 keyservice/srvutils.key
+	[root@appserver CA]# openssl x509 -req -days 185 -extfile conf/srvutils.conf -extensions v3_req -CA certs/CA_empresa.crt -CAkey private/CA_empresa.key -CAserial ca.srl -CAcreateserial -in request/srvutils.csr -out newcerts/srvutils.crt
 	Signature ok
 	subject=/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils
 	Getting CA Private Key
-	Enter pass phrase for private/CA_empresa.key:
+	Enter pass phrase for private/CA_empresa.key: Venezuela21
+
 
 
 
@@ -125,7 +134,7 @@ En este momento podemos eliminar el Request del certificado, el cual no necesita
 Preparar el directorio de trabajo
 ++++++++++++++++++++++++++++
 
-Copiamos la llave y el certificado, también el certificado publico de la CA al directorio de trabajo.::
+Copiamos la llave y el certificado, también el certificado publico de la CA al directorio de trabajo, esto ya es en el servidor en donde estará el Application Server.::
 
 	# mkdir certificados
 	# cd certificados
@@ -148,9 +157,9 @@ No es posible cargar directamente en un keystore una Private-Key, por eso debemo
 
 	# openssl pkcs12 -export -name srvutils-key -in srvutils.crt -inkey srvutils.key -out srvutils.p12
 
-	Enter Export Password: changeit	
+	Enter Export Password: changeit
 	Verifying - Enter Export Password: changeit
-	# 
+
 
 **IMPORTANTE**
 **NOTA** En el paso anterior puede colocar cualquier clave y se va crear el .p12 con éxito, pero esta clave debe ser igual a la que se le colocara al Java KeyStore. Si no se homologan las claves el **application server** (Tomcat, JBoss, Glasfish, Weblogi, WebSphere, etc) podrá abrir el Java KeyStore, pero no el Private-Key por tener otra clave.
@@ -166,72 +175,74 @@ Consultamos el certificado .p12::
 	PKCS7 Encrypted data: pbeWithSHA1And40BitRC2-CBC, Iteration 2048
 	Certificate bag
 	Bag Attributes
-	    localKeyID: 4D F3 3E E0 EF 2C 56 F2 39 84 EB 02 E8 CC B3 68 BD 43 AF 77 
+	    localKeyID: 29 84 E7 1F 2E 6A D3 C6 B8 B7 CC C1 CB FD 35 F0 2A E9 C1 D5 
 	    friendlyName: srvutils-key
 	subject=/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils
 	issuer=/C=VE/ST=DC/L=CCS/O=Default Company Ltd/OU=Sop App/CN=PERSONAL/emailAddress=root@personal.local
 	-----BEGIN CERTIFICATE-----
-	MIIDvjCCAqagAwIBAgIJALU559uWUDLgMA0GCSqGSIb3DQEBCwUAMIGPMQswCQYD
+	MIIDvjCCAqagAwIBAgIJALU559uWUDLnMA0GCSqGSIb3DQEBCwUAMIGPMQswCQYD
 	VQQGEwJWRTELMAkGA1UECAwCREMxDDAKBgNVBAcMA0NDUzEcMBoGA1UECgwTRGVm
 	YXVsdCBDb21wYW55IEx0ZDEQMA4GA1UECwwHU29wIEFwcDERMA8GA1UEAwwIUEVS
 	U09OQUwxIjAgBgkqhkiG9w0BCQEWE3Jvb3RAcGVyc29uYWwubG9jYWwwHhcNMjEw
-	ODI4MjIyNjE2WhcNMjIwMzAxMjIyNjE2WjBfMQswCQYDVQQGEwJWRTELMAkGA1UE
+	ODI5MTUzMjQ0WhcNMjIwMzAyMTUzMjQ0WjBfMQswCQYDVQQGEwJWRTELMAkGA1UE
 	CAwCREMxEDAOBgNVBAcMB0NhcmFjYXMxETAPBgNVBAoMCFBFUlNPTkFMMQswCQYD
 	VQQLDAJUSTERMA8GA1UEAwwIc3J2dXRpbHMwggEiMA0GCSqGSIb3DQEBAQUAA4IB
-	DwAwggEKAoIBAQCwTQXhYX2YueVLZTh2hFq8uB9UwuFhVMZ17si9BiYxD7paPQqg
-	RL8zXR7B4w3HgPuMmXaHPHpi5bj6/0MqlEVuCpKHdwSn4j4mu04EBbYTFPCgMl0O
-	4T4lYzBRmEGq2gTY377emMiVLy/lBZAqKLy//7VVA+7/oAkUelbpE7qYTGRawWt3
-	zTTHEtpRGbAQnseAb7RClP4leOSaWnQ40nH2nSGI0f8FVt+EI6UHaL4Gqe9zEjK1
-	ebJzLtMtIEb8OqS/t2b8FAY5tEVaWBqVG1YA29T08wItuxaGcTX/hOKFCVw8wxr6
-	VyWFC8v3n/4qtg4u9wS/WoxjSGKY6x5/KQdDAgMBAAGjTDBKMAkGA1UdEwQCMAAw
+	DwAwggEKAoIBAQDGPWqQKtN7MeMtVnj/mFioWCuq+HMoWKhop+KfD87kfNu7dTiK
+	3ah9Bq/G6YgHGwXViWXOBRQRM6glCRU6J5a2E4p0H59xWg73DQ8oUvya8dn9ZU8R
+	YE6EBKmuTTus0KktPLh3Ig4tu81Xtlk1JdZtNyAO1E7F5c8mxjAsCw0GaP18IZK3
+	J7Rddr7n7G63rh2EjNQ8/R3tkwfgCZ7GOYlLyNXXQPMtZVsb15fY4xnyHUbni9hE
+	pLq4nLFAUrGNwgbFQGy4hA691OvqDbrEXVDmpwlp02Wk7E3rGIcPfORYDdobRJlH
+	FAeMICi0Gh0VhZuaxi26yWc4e48aZiOKA5qrAgMBAAGjTDBKMAkGA1UdEwQCMAAw
 	CwYDVR0PBAQDAgXgMDAGA1UdEQQpMCeCDnNydnV0aWxzLmxvY2Fsgg9tb25pdG9y
-	ZW8ubG9jYWyHBMCoABQwDQYJKoZIhvcNAQELBQADggEBAL+k3lYI4PKmVg/tgL0T
-	lxWVRsLm07Re9Q4S0Xn4y1c7o7Xb6oIk9eyarIDOiX/64RvGOs9sjijzRYlm28us
-	hzj9iltFZ28TxU9tC5eGS7af/JzeZ6d5guQhZUscoRzCyEyieKXIkJ2TC40EJSrB
-	xnrR4JXgw26nEK3e5u8nScyhNgKP8I1AB/mQYKw6RjrFkS+2gMzqV4eijIwkiHjn
-	FjB33QO+68DVncDI6cWVXxl9WmhBSbBDEVKWgpDSm3LTtnIAfw9nnaZv/CEulcD9
-	+PRHN4CHB5L1DHcHhny4IEJacEQtGo6jOKgb4enx6czvq4kPnHEsh00wqiR9EahN
-	7p8=
+	ZW8ubG9jYWyHBMCoABQwDQYJKoZIhvcNAQELBQADggEBALsgZY3KBFCn3Vw/Qnh0
+	VEoVsPMBpAwBYgJR6rEVZffOmZJtnFxmBxFQt7F3ZBnNU4IqVzk7WyruVl8F78Ng
+	aeIzvTsRXgZE5YfTvDFBgcd7O3pg4m82iB/xNQeaJlSs8f90EHV8dbe5yM3xuoVa
+	jCiwtVvPtvMALRZdhLHIihp+6MQ0CbFmzU6acDsoM0GGtmP/TOytUdsexuMkABB2
+	3CY5K8v9MfTuMn1XeGi4t+KXium5WQJL7oeWn44QW40IPqvPOSbTrR0cyP82acau
+	CO4jZtHbd5nSVmyKmvKjD0PMn0QmhcC2W95hwI5C+7xW60aarx999LdZ1qoS04Au
+	gBQ=
 	-----END CERTIFICATE-----
 	PKCS7 Data
 	Shrouded Keybag: pbeWithSHA1And3-KeyTripleDES-CBC, Iteration 2048
 	Bag Attributes
-	    localKeyID: 4D F3 3E E0 EF 2C 56 F2 39 84 EB 02 E8 CC B3 68 BD 43 AF 77 
+	    localKeyID: 29 84 E7 1F 2E 6A D3 C6 B8 B7 CC C1 CB FD 35 F0 2A E9 C1 D5 
 	    friendlyName: srvutils-key
 	Key Attributes: <No Attributes>
 	Enter PEM pass phrase: changeit
 	Verifying - Enter PEM pass phrase: changeit
 	-----BEGIN ENCRYPTED PRIVATE KEY-----
-	MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDgQI7OQM2FFT5MYCAggA
-	MBQGCCqGSIb3DQMHBAihc4FTSqzSYgSCBMhquF91omAS8wTWIOlPIPOeJ1YW1bdu
-	RdzPCoaNUR5ZYyLoF6LEzyZ8U97AewaB/Egg1Vt8++9TgN6oG2HsRSklz2IN3pMq
-	v8btyqQNSw6/Lb4LzdL8QdtXvZwknxhR8rATmOU3wAM1pDuUFV/ejGjxoY7BJh/K
-	tiHmutQkdI1dZXUIHnvR9bC8VeRe70JCGpUqgNX5GPJjbFbtoWsc52+WlgG7WBit
-	PlSD6RZVtMvCJ6FBnMjc2Ny+co8TFAAnTxPstjFpl0uC+4nPk78tiBqGliS5qxpL
-	AFwoqGkkZW1XSx93torvhH7JvWOKnE7DT0MxQEDhwISd4h3Zu8O20H0E2u/p8IfW
-	btDNGHiEHJ+8M3LaHDboZAsun7nXtRUwCUU7vrBIfMEmSRBuFsXbhAO3ZIR9idUL
-	Pc8wBdNaZRmldKz5xPcMxZJy9HeBiKJGB2pWlMS1TdRdXVex4gSWVAoroH7BXYAk
-	cC1i9r240DdcWMJB4dc/3mFcaLnDyh1iRhNmYHT69kk7b2bH7BfGBu/fYKjaWqAz
-	4a+Jc53uXFlK7QHaDUSO5Hld/rxVpxG8dAOIaXAoOuZD2PG1kuwmbtzFhEU0z35h
-	ZmnegPLZJxzZfUsnwPKp8B7e/q715B1pnxSMzS3YBN8BFrdEHEA07bd05utM/LL5
-	xQL2EDskACvKU3MGJ2VjTahcHRmEnUx4aX6MeYd2nJNu4jQtMw7bYxbSOx+0Y7+X
-	YibCbIVU6wFMTDm8mNGwY8OQS+1yxXBvMFI3M8gOTBMTqZhBXNLg6FfzmSholQuA
-	4CCkjGWYUTBarRwFr7LWYpy2J6+2HfB/LFMZV33RynjFPO/TJevlHiuYTJ3FnAes
-	UveE/abEUO/oj9kvHVEMhwrmfyH2AbSJ3n7bNucUPNk5sqGu0Bgs0WSsdy7GZQfC
-	dj641tU+POr829xVyWhRP+sNg7VDEom7h4jg/7CV4kVrj6An5Yyxgj+ORXYPpK+y
-	jb+EWh808+eebC2FMNbqOLZkL8QE3Ls4a3qABQHnpSQeDjh1WwEWJDeFWdOiE4cX
-	HndTJX7Nc3fzgw8CsT5DSgoCpOcaWhya5vuYVVgCIpM87BQV0w65H8C6RTMpbIX/
-	6AUr1HXjUC0yW7n9UzvMaPgoulVA6OuvoayeSNgtCLZzHwI4at+kJgwLWkJENObs
-	C9MnT9Q0TcrFCnLHSIzggonZtfzjAuGdpzp1LP7XhPY+k/Cp0KsPBqu41Eujt2aQ
-	/YGPreg54NzbV18ofDOLOmkX291CKcb5B/sh0ycRE7Z1KIyO1QjEeWXV8/GFvE3+
-	5WGjl1JXRybvPW83h90ReCrY+0R9iLuLBFLUcN7FVWb0m+xU0K2e7OT5bNUxiKqx
-	x9qXAT2e0vNYO6aRxDdCDhQA77iuySXZvQKO4DdEyiYME3b0UXd4EQHyuRfaq7rT
-	I/uzK8ZJ7JCLd63TLigIH9m/gdVLAXHZHiANyhju6Q/KOjsoqovzGDKK7Z8M2pSd
-	7WCuNXkNNk2ytOLy8htKx+pBE+CIB16NPztWgm7D50nwJ/YJjTt26/Mx2zkYNU60
-	nWzGAJ3e1+d228HSk8MpCWaV0n5pEacguIhqt18ehArJAuF4YVx6yspg1hdzJR6l
-	Snk=
+	MIIFDjBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDgQIBFHn0NVAzvoCAggA
+	MBQGCCqGSIb3DQMHBAjLBZ9S+ZK2sASCBMi5xScR00pY3N6HyQ2zGCq3i/vhmU/x
+	gudTPJdqQRHbs/3/y5Gt/O7QlRK6nFtWctY8bqTD0SokRr9hAak9yR/yKedMGGJn
+	zw2kw3BGrGB+/2IvV4AGl2Oy7gqekkXjG7OwoZnqh9HWFoI64qt4gkft7m7C6AFU
+	nCKFo5DxFRY0mVEcN12s3cWieMMSUrfqbu20omGsAzyXgJYvT5opxKrtSGytroD6
+	Is/DalFe6ra7sfLpRGHB45yrN5Z1p121NBZQnTJYtfxSXDAF6DcWE4f6iJdo+8sc
+	4Io/GVRcP2sjkGPqT7uXKgSToe+c4hKv83XpvZcy46CDvYqgT8CvBAbT1X/YX4pH
+	JaSoWl5Xgx3AR+fzoXo9mu8dsBgNtUTH0x2sHXuf3rPd0xPchoNHaqvOebOZ7Fjp
+	lYmVEzn4VQf/3ekdiLJJTWu0mutRYHBBGMrGCRjIeMHyqod8x9YDgqEOqtMcEdxu
+	whXIxf3stAWWvkfQFzQn4ntwFTkgyC4GKW2sSu9MK+rdv98vZt7OlKjtxpvT40XH
+	YCMrS56C87a7TTJ44G4t/ZFR32UqB2bVrKV40HjOZmJuLOQuQmWsskXG6wMT7ZCP
+	cgkXhSAchFFCTWQZNIzpkNhbkg6Ynw9iSY1fc0q38hdaJLLbX8bGhkAP7PeZgycH
+	p0NxroUeqQ3G4isvP4ufoILukmTMADldq8i5xCd0706bn5Ks5ya9viqstO9ZvPuz
+	TjfEngv495riINSknBjzBdq84jBV2Qdlvk3hlMJ17ZQOs8HVC4LyzuHOm1j/nLsO
+	bVjhdouVB7VrLyZTYf1XzxmRsscTD0Q4EkaR9NwDjW2Ea0y1VVRbR92KDdk83B63
+	RbfSXToUpaOTmYxc4zAVOUYYu72zeGm9RtTUE2IqSlRr0kGqrxOIda/ljNmJpsHv
+	RS1bm/FaP/PCfd+kxDHHLaSUOxq2qWGhSxEds5In1jpsXNdOQ7gcS7t91TyyoOvZ
+	RLNqxxc9nDWeCmF/RsXPWckehm4KFJdaI+DAKyByBOKGmOwo6GEHVJ7g53gPgknF
+	WFGfGF9OHapKD5sOyMzF5jYmH/Q4Tq+LC4THlrEJOXTy/MgQq1Ve//7UWkzC0DUO
+	NHZrFLXScHqhoNRzRacZ0P9YtETtnQqkkkkPE8iOxdD3ZHqQy6gE1ngAe7k/TiH+
+	+hqMYYnINXtAtKFipgdzVEl8KEg/DQtqCPYYEu3VPW1mlBUWouOOb997EKB3IYSR
+	pmFfu2x06LyxCQKFTRA/olNfTnES+z/1PbIlfeyMtvYF13fu5tkB3LH7i/XTOlH6
+	7Xgb1ljDg322eNyAe7iJPqllov1hX0w1n9Es5a9Zw8W2L5OLX0wb9jD/qrTHQDiD
+	2t/6puPL5Am3FVeD+iRJFU3nfKqkQuzETsbnmjUIFiXQ4F0grrRte725m5BcSMbh
+	wQjDTNm0J6OphQArJKOC1U2IPqkzfql/26TJN5moycs6ctbfo4RRiZvS8T5o1Fcv
+	MGz+LRmNEtN43m6+B6im03q7ccAArI1DjAcktFJxKscts0bL3sPj9BULJyJsVrQk
+	tAmg1dpwhiKKVfyzkT3Q6Mqd3Lk9jRmaeFim8R4zbFV4ZRFIUjf2xqtA6gLWxgbR
+	v48=
 	-----END ENCRYPTED PRIVATE KEY-----
 	# 
+
+**IMPORTANTE** Recordar que cuando se crea el .p12 estamos ya incluyendo dentro de él, la Private Key y el certificado.
 
 
 Crear el almacén de claves Keystore 
@@ -239,19 +250,18 @@ Crear el almacén de claves Keystore
 
 Creamos el almacén de claves Keystore agregando el p12 anteriormente::
 
-	# keytool -importkeystore -destkeystore Mykeystore.jks -srckeystore srvutils.p12 -srcstoretype pkcs12 -alias srvutils-key
+	# keytool -importkeystore -destkeystore keystore.jks -srckeystore srvutils.p12 -srcstoretype pkcs12 -alias srvutils-key
 
 	Introduzca la contraseña de almacén de claves de destino:  changeit
 	Volver a escribir la contraseña nueva: changeit
 	Introduzca la contraseña de almacén de claves de origen:  changeit
 	# 
 
+**IMPORTANTE** Si no utilizo las mismas claves para el Java KeyStore y de la Private Key, no continué, no va funcionar.
 
 Consultamos el keystore y debemos ver las entrada de la private key::
 
-	# keytool -list -v -keystore Mykeystore.jks
-
-	Introduzca la contraseña del almacén de claves:  changeit
+	# keytool -list -v -keystore keystore.jks --storepass changeit
 
 	Tipo de Almacén de Claves: JKS
 	Proveedor de Almacén de Claves: SUN
@@ -259,84 +269,18 @@ Consultamos el keystore y debemos ver las entrada de la private key::
 	Su almacén de claves contiene 1 entrada
 
 	Nombre de Alias: srvutils-key
-	Fecha de Creación: 28/08/2021
+	Fecha de Creación: 29/08/2021
 	Tipo de Entrada: PrivateKeyEntry
 	Longitud de la Cadena de Certificado: 1
 	Certificado[1]:
 	Propietario: CN=srvutils, OU=TI, O=PERSONAL, L=Caracas, ST=DC, C=VE
 	Emisor: EMAILADDRESS=root@personal.local, CN=PERSONAL, OU=Sop App, O=Default Company Ltd, L=CCS, ST=DC, C=VE
-	Número de serie: b539e7db965032e0
-	Válido desde: Sat Aug 28 18:26:16 EDT 2021 hasta: Tue Mar 01 17:26:16 EST 2022
+	Número de serie: b539e7db965032e7
+	Válido desde: Sun Aug 29 11:32:44 EDT 2021 hasta: Wed Mar 02 10:32:44 EST 2022
 	Huellas digitales del Certificado:
-		 MD5: 03:28:4A:77:CA:9A:D1:4C:AB:44:F7:7D:75:29:88:5C
-		 SHA1: 4D:F3:3E:E0:EF:2C:56:F2:39:84:EB:02:E8:CC:B3:68:BD:43:AF:77
-		 SHA256: 1E:AD:68:0D:0A:1A:6B:6A:31:1C:DD:56:B3:06:12:B4:F8:60:18:A4:E2:E2:1D:F8:4D:5F:F7:76:14:67:15:05
-		 Nombre del Algoritmo de Firma: SHA256withRSA
-		 Versión: 3
-
-	Extensiones: 
-
-	#1: ObjectId: 2.5.29.19 Criticality=false
-	BasicConstraints:[
-	  CA:false
-	  PathLen: undefined
-	]
-
-	#2: ObjectId: 2.5.29.15 Criticality=false
-	KeyUsage [
-	  DigitalSignature
-	  Non_repudiation
-	  Key_Encipherment
-	]
-
-	#3: ObjectId: 2.5.29.17 Criticality=false
-	SubjectAlternativeName [
-	  DNSName: srvutils.local
-	  DNSName: monitoreo.local
-	  IPAddress: 192.168.0.20
-	]
-
-
-
-	*******************************************
-	*******************************************
-
-Agregar el certificado dentro del keystore
-+++++++++++++++++++++++++++++++++++++++
-
-Agregamos la certificado dentro del keystore::
-
-	# keytool -import -alias srvutils-certificate -file CA_empresa.crt -keystore Mykeystore.jks
-
-	Introduzca la contraseña del almacén de claves:  changeit
-	El certificado ya existe en el almacén de claves con el alias <srvutils-key>
-	¿Aún desea agregarlo? [no]:  s
-	Se ha agregado el certificado al almacén de cAgregar la CA dentro del keystorelaves
-	# 
-
-Consultamos el keystore y debemos ver las entrada de la private key y el certificado::
-
-	# keytool -list -v -keystore Mykeystore.jks
-
-	Introduzca la contraseña del almacén de claves:  
-
-	Tipo de Almacén de Claves: JKS
-	Proveedor de Almacén de Claves: SUN
-
-	Su almacén de claves contiene 2 entradas
-
-	Nombre de Alias: srvutils-certificate
-	Fecha de Creación: 28/08/2021
-	Tipo de Entrada: trustedCertEntry
-
-	Propietario: CN=srvutils, OU=TI, O=PERSONAL, L=Caracas, ST=DC, C=VE
-	Emisor: EMAILADDRESS=root@personal.local, CN=PERSONAL, OU=Sop App, O=Default Company Ltd, L=CCS, ST=DC, C=VE
-	Número de serie: b539e7db965032e0
-	Válido desde: Sat Aug 28 18:26:16 EDT 2021 hasta: Tue Mar 01 17:26:16 EST 2022
-	Huellas digitales del Certificado:
-		 MD5: 03:28:4A:77:CA:9A:D1:4C:AB:44:F7:7D:75:29:88:5C
-		 SHA1: 4D:F3:3E:E0:EF:2C:56:F2:39:84:EB:02:E8:CC:B3:68:BD:43:AF:77
-		 SHA256: 1E:AD:68:0D:0A:1A:6B:6A:31:1C:DD:56:B3:06:12:B4:F8:60:18:A4:E2:E2:1D:F8:4D:5F:F7:76:14:67:15:05
+		 MD5: 3F:6C:FE:D6:59:C5:25:AA:E0:3B:42:1F:2E:C1:E6:C3
+		 SHA1: 29:84:E7:1F:2E:6A:D3:C6:B8:B7:CC:C1:CB:FD:35:F0:2A:E9:C1:D5
+		 SHA256: BA:46:55:0B:3A:56:47:61:57:40:3E:02:E4:B7:27:CD:A5:71:77:58:A8:C3:00:6A:53:C6:F1:56:89:AB:DE:72
 		 Nombre del Algoritmo de Firma: SHA256withRSA
 		 Versión: 3
 
@@ -368,58 +312,13 @@ Consultamos el keystore y debemos ver las entrada de la private key y el certifi
 	*******************************************
 
 
-	Nombre de Alias: srvutils-key
-	Fecha de Creación: 28/08/2021
-	Tipo de Entrada: PrivateKeyEntry
-	Longitud de la Cadena de Certificado: 1
-	Certificado[1]:
-	Propietario: CN=srvutils, OU=TI, O=PERSONAL, L=Caracas, ST=DC, C=VE
-	Emisor: EMAILADDRESS=root@personal.local, CN=PERSONAL, OU=Sop App, O=Default Company Ltd, L=CCS, ST=DC, C=VE
-	Número de serie: b539e7db965032e0
-	Válido desde: Sat Aug 28 18:26:16 EDT 2021 hasta: Tue Mar 01 17:26:16 EST 2022
-	Huellas digitales del Certificado:
-		 MD5: 03:28:4A:77:CA:9A:D1:4C:AB:44:F7:7D:75:29:88:5C
-		 SHA1: 4D:F3:3E:E0:EF:2C:56:F2:39:84:EB:02:E8:CC:B3:68:BD:43:AF:77
-		 SHA256: 1E:AD:68:0D:0A:1A:6B:6A:31:1C:DD:56:B3:06:12:B4:F8:60:18:A4:E2:E2:1D:F8:4D:5F:F7:76:14:67:15:05
-		 Nombre del Algoritmo de Firma: SHA256withRSA
-		 Versión: 3
-
-	Extensiones: 
-
-	#1: ObjectId: 2.5.29.19 Criticality=false
-	BasicConstraints:[
-	  CA:false
-	  PathLen: undefined
-	]
-
-	#2: ObjectId: 2.5.29.15 Criticality=false
-	KeyUsage [
-	  DigitalSignature
-	  Non_repudiation
-	  Key_Encipherment
-	]
-
-	#3: ObjectId: 2.5.29.17 Criticality=false
-	SubjectAlternativeName [
-	  DNSName: srvutils.local
-	  DNSName: monitoreo.local
-	  IPAddress: 192.168.0.20
-	]
-
-
-
-	*******************************************
-	*******************************************
-
-
-Agregar la CA dentro del keystore
+Importar la CA dentro del keystore
 ++++++++++++++++++++++++++++++++++++
 
 Agregar el certificado publico de la CA dentro del keystore::
 
-	# keytool -import -alias CA-root -file CA_empresa.crt -keystore Mykeystore.jks
+	# keytool -import -trustcacerts -alias ca-certificate -file CA_empresa.crt -keystore keystore.jks -storepass changeit
 
-	Introduzca la contraseña del almacén de claves:  changeit
 	Propietario: EMAILADDRESS=root@personal.local, CN=PERSONAL, OU=Sop App, O=Default Company Ltd, L=CCS, ST=DC, C=VE
 	Emisor: EMAILADDRESS=root@personal.local, CN=PERSONAL, OU=Sop App, O=Default Company Ltd, L=CCS, ST=DC, C=VE
 	Número de serie: ddff243bcbceacc1
@@ -457,106 +356,21 @@ Agregar el certificado publico de la CA dentro del keystore::
 
 	¿Confiar en este certificado? [no]:  s
 	Se ha agregado el certificado al almacén de claves
+	# 
 
 
-Consultamos el keystore y debemos ver las entrada de la private key,l certificado y el certificado publico de la CA::
 
-	# keytool -list -v -keystore Mykeystore.jks
+Consultamos el keystore y debemos ver las entrada de la private keyy el certificado publico de la CA::
 
-	Introduzca la contraseña del almacén de claves:  
+	# keytool -list -v -keystore keystore.jks -storepass changeit
 
 	Tipo de Almacén de Claves: JKS
 	Proveedor de Almacén de Claves: SUN
 
-	Su almacén de claves contiene 3 entradas
+	Su almacén de claves contiene 2 entradas
 
-	Nombre de Alias: srvutils-certificate
-	Fecha de Creación: 28/08/2021
-	Tipo de Entrada: trustedCertEntry
-
-	Propietario: CN=srvutils, OU=TI, O=PERSONAL, L=Caracas, ST=DC, C=VE
-	Emisor: EMAILADDRESS=root@personal.local, CN=PERSONAL, OU=Sop App, O=Default Company Ltd, L=CCS, ST=DC, C=VE
-	Número de serie: b539e7db965032e0
-	Válido desde: Sat Aug 28 18:26:16 EDT 2021 hasta: Tue Mar 01 17:26:16 EST 2022
-	Huellas digitales del Certificado:
-		 MD5: 03:28:4A:77:CA:9A:D1:4C:AB:44:F7:7D:75:29:88:5C
-		 SHA1: 4D:F3:3E:E0:EF:2C:56:F2:39:84:EB:02:E8:CC:B3:68:BD:43:AF:77
-		 SHA256: 1E:AD:68:0D:0A:1A:6B:6A:31:1C:DD:56:B3:06:12:B4:F8:60:18:A4:E2:E2:1D:F8:4D:5F:F7:76:14:67:15:05
-		 Nombre del Algoritmo de Firma: SHA256withRSA
-		 Versión: 3
-
-	Extensiones: 
-
-	#1: ObjectId: 2.5.29.19 Criticality=false
-	BasicConstraints:[
-	  CA:false
-	  PathLen: undefined
-	]
-
-	#2: ObjectId: 2.5.29.15 Criticality=false
-	KeyUsage [
-	  DigitalSignature
-	  Non_repudiation
-	  Key_Encipherment
-	]
-
-	#3: ObjectId: 2.5.29.17 Criticality=false
-	SubjectAlternativeName [
-	  DNSName: srvutils.local
-	  DNSName: monitoreo.local
-	  IPAddress: 192.168.0.20
-	]
-
-
-
-	*******************************************
-	*******************************************
-
-
-	Nombre de Alias: srvutils-key
-	Fecha de Creación: 28/08/2021
-	Tipo de Entrada: PrivateKeyEntry
-	Longitud de la Cadena de Certificado: 1
-	Certificado[1]:
-	Propietario: CN=srvutils, OU=TI, O=PERSONAL, L=Caracas, ST=DC, C=VE
-	Emisor: EMAILADDRESS=root@personal.local, CN=PERSONAL, OU=Sop App, O=Default Company Ltd, L=CCS, ST=DC, C=VE
-	Número de serie: b539e7db965032e0
-	Válido desde: Sat Aug 28 18:26:16 EDT 2021 hasta: Tue Mar 01 17:26:16 EST 2022
-	Huellas digitales del Certificado:
-		 MD5: 03:28:4A:77:CA:9A:D1:4C:AB:44:F7:7D:75:29:88:5C
-		 SHA1: 4D:F3:3E:E0:EF:2C:56:F2:39:84:EB:02:E8:CC:B3:68:BD:43:AF:77
-		 SHA256: 1E:AD:68:0D:0A:1A:6B:6A:31:1C:DD:56:B3:06:12:B4:F8:60:18:A4:E2:E2:1D:F8:4D:5F:F7:76:14:67:15:05
-		 Nombre del Algoritmo de Firma: SHA256withRSA
-		 Versión: 3
-
-	Extensiones: 
-
-	#1: ObjectId: 2.5.29.19 Criticality=false
-	BasicConstraints:[
-	  CA:false
-	  PathLen: undefined
-	]
-
-	#2: ObjectId: 2.5.29.15 Criticality=false
-	KeyUsage [
-	  DigitalSignature
-	  Non_repudiation
-	  Key_Encipherment
-	]
-
-	#3: ObjectId: 2.5.29.17 Criticality=false
-	SubjectAlternativeName [
-	  DNSName: srvutils.local
-	  DNSName: monitoreo.local
-	  IPAddress: 192.168.0.20
-	]
-
-	*******************************************
-	*******************************************
-
-
-	Nombre de Alias: ca-root
-	Fecha de Creación: 28/08/2021
+	Nombre de Alias: ca-certificate
+	Fecha de Creación: 29/08/2021
 	Tipo de Entrada: trustedCertEntry
 
 	Propietario: EMAILADDRESS=root@personal.local, CN=PERSONAL, OU=Sop App, O=Default Company Ltd, L=CCS, ST=DC, C=VE
@@ -599,6 +413,50 @@ Consultamos el keystore y debemos ver las entrada de la private key,l certificad
 	*******************************************
 	*******************************************
 
+
+	Nombre de Alias: srvutils-key
+	Fecha de Creación: 29/08/2021
+	Tipo de Entrada: PrivateKeyEntry
+	Longitud de la Cadena de Certificado: 1
+	Certificado[1]:
+	Propietario: CN=srvutils, OU=TI, O=PERSONAL, L=Caracas, ST=DC, C=VE
+	Emisor: EMAILADDRESS=root@personal.local, CN=PERSONAL, OU=Sop App, O=Default Company Ltd, L=CCS, ST=DC, C=VE
+	Número de serie: b539e7db965032e7
+	Válido desde: Sun Aug 29 11:32:44 EDT 2021 hasta: Wed Mar 02 10:32:44 EST 2022
+	Huellas digitales del Certificado:
+		 MD5: 3F:6C:FE:D6:59:C5:25:AA:E0:3B:42:1F:2E:C1:E6:C3
+		 SHA1: 29:84:E7:1F:2E:6A:D3:C6:B8:B7:CC:C1:CB:FD:35:F0:2A:E9:C1:D5
+		 SHA256: BA:46:55:0B:3A:56:47:61:57:40:3E:02:E4:B7:27:CD:A5:71:77:58:A8:C3:00:6A:53:C6:F1:56:89:AB:DE:72
+		 Nombre del Algoritmo de Firma: SHA256withRSA
+		 Versión: 3
+
+	Extensiones: 
+
+	#1: ObjectId: 2.5.29.19 Criticality=false
+	BasicConstraints:[
+	  CA:false
+	  PathLen: undefined
+	]
+
+	#2: ObjectId: 2.5.29.15 Criticality=false
+	KeyUsage [
+	  DigitalSignature
+	  Non_repudiation
+	  Key_Encipherment
+	]
+
+	#3: ObjectId: 2.5.29.17 Criticality=false
+	SubjectAlternativeName [
+	  DNSName: srvutils.local
+	  DNSName: monitoreo.local
+	  IPAddress: 192.168.0.20
+	]
+
+
+
+	*******************************************
+	*******************************************
+	# 
 
 
 
