@@ -105,7 +105,7 @@ Firmar el Request para generar el certificado del servidor o servicio.
 A continuación firmamos el pedido de certificado para generar el certificado para el servidor o servicio, esto se hace en la Entidad Certificadora::
 
 
-	[root@appserver CA]# openssl x509 -req -days 185 -extfile conf/srvutils.conf -extensions v3_req -CA certs/CA_empresa.crt -CAkey private/CA_empresa.key -CAserial ca.srl -CAcreateserial -in request/srvutils.csr -out newcerts/srvutils.crt
+	# openssl x509 -req -days 185 -extfile conf/srvutils.conf -extensions v3_req -CA certs/CA_empresa.crt -CAkey private/CA_empresa.key -CAserial ca.srl -CAcreateserial -in request/srvutils.csr -out newcerts/srvutils.crt
 	Signature ok
 	subject=/C=VE/ST=DC/L=Caracas/O=PERSONAL/OU=TI/CN=srvutils
 	Getting CA Private Key
