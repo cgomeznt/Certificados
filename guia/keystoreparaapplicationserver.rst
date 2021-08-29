@@ -1,6 +1,7 @@
 Crear un archivo Java KeyStore valido para uso en los navegadores
 ==============================================================
 
+Vamos a crear una private key, el request y se va firmar con una CA de la empresa, luego se van a introducir en un archivo Java Keystores la private key, el certificado y el certificado publico de la CA. El Java KeyStore será publicado dentro del **Application Server** (Tomcat, JBoss, Glasfish, Weblogic, WebSphere, etc.), posteriormente vamos a configurar para que desde los navegadores se puedan visualizar el certificado como valido.
 
 Los pasos son los siguientes:
 
@@ -19,6 +20,10 @@ Los pasos son los siguientes:
 * Importar el certificado dentro del keystore.
 
 * Importar la CA dentro del keystore.
+
+* Publicar el Java KeyStore en un Application Server.
+
+* Preparar el Navegador para que pueda ver el certificado como valido.
 
 
 
@@ -545,8 +550,6 @@ Consultamos el keystore y debemos ver las entrada de la private key,l certificad
 	  DNSName: monitoreo.local
 	  IPAddress: 192.168.0.20
 	]
-
-
 
 	*******************************************
 	*******************************************
