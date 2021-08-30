@@ -5,7 +5,7 @@
 * [Navegador aceptar Trusted ROOT](guia/NavegadoresTrustedRoot.rst)
 * [Java KeyStore valido para Applications Servers](guia/keystoreparaapplicationserver.rst)
 * [Nuestra propia CA en Centos](guia/cacentos.rst) 
-* [Manejo de certificados con keytool](guia/keytooldrive.rst)
+* [Manejo de certificados y private key con keytool](guia/2.1 keyStore.rst)
 * [Importar un Certificado de una CA en el cacerts de la JDK](guia/importarCAtocacerts.rst)
 * [Instalar Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files](guia/JCE.rst)
 * [Crear un Java KeyStore File](guia/2.Crear_KeyStore_File.rst) 
