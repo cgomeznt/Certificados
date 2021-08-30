@@ -526,7 +526,7 @@ Seleccionamos el botón de Editar Confianza y marcamos los dos (2) check y listo
 .. figure:: ../images/keystore/07.png
 
 
-Nos vamos nuevamente a la URL y vemos que ahora si se produce de forma exitosa el Handcheck y el navegador ve seguro el certificado.
+Nos vamos nuevamente a la URL y vemos que ahora si se produce de forma exitosa el HandShake y el navegador ve seguro el certificado.
 
 .. figure:: ../images/keystore/08.png
 
