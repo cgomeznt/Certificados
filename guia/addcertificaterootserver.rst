@@ -9,6 +9,30 @@ Si desea enviar o recibir mensajes firmados por las autoridades de la raíz y la
 **IMPORTANTE** Después de ejecutar los siguientes pasos, la nueva CA sera conocida por las utilidades del sistema como curl, get y otros servicios. Desafortunadamente, **esto no afecta a la mayoría de los navegadores web como Mozilla Firefox o Google Chrome.**
 
 
+
+Esta son las rutas absolutas para los certificados publicos CA
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+::
+
+	"/etc/ssl/certs/ca-certificates.crt",                // Debian/Ubuntu/Gentoo etc.
+	"/etc/pki/tls/certs/ca-bundle.crt",                  // Fedora/RHEL 6
+	"/etc/ssl/ca-bundle.pem",                            // OpenSUSE
+	"/etc/pki/tls/cacert.pem",                           // OpenELEC
+	"/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem", // CentOS/RHEL 7
+	"/etc/ssl/cert.pem",                                 // Alpine Linux
+
+Tambien::
+
+	"/etc/ssl/certs",               // SLES10/SLES11, https://golang.org/issue/12139
+	"/system/etc/security/cacerts", // Android
+	"/usr/local/share/certs",       // FreeBSD
+	"/etc/pki/tls/certs",           // Fedora/RHEL
+	"/etc/openssl/certs",           // NetBSD
+	"/var/ssl/certs",               // AIX
+
+
+
 Mac OS X
 +++++++++++++
 
@@ -112,7 +136,7 @@ Habilitar la característica de configuración dinámica de CA::
 
  
 
-Agregar como un nuevo archivo en /etc/pki/ca-trust/source/anchors /::
+Agregar como un nuevo archivo en /etc/pki/ca-trust/source/anchors/::
 
 	cp foo.crt /etc/pki/ca-trust/source/anchors/
 
