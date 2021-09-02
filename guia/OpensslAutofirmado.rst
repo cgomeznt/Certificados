@@ -1,8 +1,9 @@
 Openssl autofirmado
 ======================
 
-Creamos la llave primaria y un certificado autofirmado.::
+Creamos la llave primaria y un certificado autofirmado.
 +++++++++++++++++++++++++++++++++++++++++++++++++
+::
 
 	# cd /tmp
 	# openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
@@ -30,6 +31,7 @@ Creamos la llave primaria y un certificado autofirmado.::
 
 Centralizamos el certificado el Private Key y el certificado publico de la CA
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+::
 
 	# cd /tmp/
 	# mkdir certificado
@@ -38,6 +40,7 @@ Centralizamos el certificado el Private Key y el certificado publico de la CA
 
 Otorgamos los permisos
 ++++++++++++++++++
+::
 
 	# chown -R usuario: /tmp/certificado
 	# chmod 0600 /tmp/certificado/*
