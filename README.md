@@ -12,6 +12,7 @@
 * [Crear Key el request firmar el crt con la CA y colocarlo en un keystore](guia/keycsrcrttokeystore.rst) 
 * [Cipher recomendado para cumplir con PCI](guia/cipherrecomendado.rst)
 * [openssl verificar una URL con su certificado publico de CA](guia/openssl_verificar-URL_su_certificado_publico_CA.rst)
+* [Un Autofirmado con OpenSSL](guia/OpensslAutofirmado.rst)
 
 
 
