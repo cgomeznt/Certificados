@@ -41,7 +41,7 @@ Las extensiones de archivos que se generarán en estos directorios serán las si
 Para la configuración inicial de OpenSSL, copiamos el archivo de configuración por defecto de OpenSSL (openssl.cnf) al directorio /opt/CA. En Debian se encuentra en el directorio /etc/ssl/openssl.cnf pero en CentOS /etc/pki/tls/openssl.cnf::
 
 	# cp /etc/pki/tls/openssl.cnf .
-	# chmod 0600 /CA/openssl.cnf
+	# chmod 0600 /opt/CA/openssl.cnf
 
 Luego creamos dos archivos que funcionan como bases de datos y randon para OpenSSL::
 
@@ -116,7 +116,7 @@ Después de terminar la configuración inicial, podemos crear un certificado aut
 
 Se crearán dos archivos: certs/CA_empresa.crt, certificado de la CA públicamente disponible y con lectura para todo el mundo; private/CA_empresa.key, clave privada del certificado de la CA. A pesar de que está protegida por una contraseña se debe restringir el acceso::
 
-	# chmod 0400 /CA/private/CA_empresa.key
+	# chmod 0400 /opt/CA/private/CA_empresa.key
 
 
 Listo, hasta aquí tenemos nuestra entidad Certificadora completa...!!!!

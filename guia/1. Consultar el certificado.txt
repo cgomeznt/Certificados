@@ -44,7 +44,9 @@ Consultar un certificado de un servidor Remoto y exportar el certificado publico
 
 	echo -n | openssl s_client -connect 10.124.0.81:3636 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ldapserver.crt
 
+Verificar un certificado contra el certificado publico de la CA.
 
+	$ openssl verify -CAfile ca.crt uccdev.credicard.com.ve.crt
 
 Consultar un certificado de un servidor Remoto su tipo de cifrado (cipher)
 
@@ -63,3 +65,11 @@ Consultar un certificado de un servidor Remoto su tipo de cifrado (cipher)
 Consultar un certificado de un servidor Remoto su valides de fecha
 
 	openssl s_client -connect localhost:8443 -CAfile /etc/ssl/ca.crt 2> /dev/null  | openssl x509 -noout -dates
+
+
+Si por alguna razón queremos remover la clave del key, tenemos que saber cual es la clave y hacer.::
+
+	# openssl rsa -in srvutils.key.org -out srvutils.key
+	Enter pass phrase for srvutils.key.org:
+	writing RSA key
+
