@@ -3,7 +3,7 @@ Varios tipos de consulta
 
 	keytool -list -v -keystore portalappclusprd.jks
 
-	openssl rsa -in /etc/pki/tls/private/101-cert.key -check
+	openssl rsa -check -in /etc/pki/tls/private/101-cert.key 
 
 
 	openssl req -text -noout -in slbbe.credicard.com.ve.csr
@@ -72,4 +72,11 @@ Si por alguna razón queremos remover la clave del key, tenemos que saber cual e
 	# openssl rsa -in srvutils.key.org -out srvutils.key
 	Enter pass phrase for srvutils.key.org:
 	writing RSA key
+
+	# openssl rsa -check -in keyservice/srvutils.key -out keyservice/srvutils-without.key
+
+Chequear los MD5 de una public key para estar seguro que hace match con el CSR o private key.:
+
+	# openssl x509 -noout -modulus -in CA.crt | openssl md5
+	(stdin)= 2b5ea007e469cb17dd768ee24b7e92d9
 
