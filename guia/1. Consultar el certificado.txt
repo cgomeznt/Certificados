@@ -3,16 +3,14 @@ Varios tipos de consulta
 
 	keytool -list -v -keystore portalappclusprd.jks
 
-	openssl rsa -check -in /etc/pki/tls/private/101-cert.key 
-
-
 	openssl req -text -noout -in slbbe.credicard.com.ve.csr
 
+	openssl rsa -check -in  /etc/pki/tls/private/101-cert.key 
 
-	openssl x509 -in Ldapclusprd.crt -noout -text
+	openssl x509 -text -noout -in Ldapclusprd.crt
 
 
-	openssl x509 -in certificado.pem -inform pem -noout -text
+	openssl x509 -inform pem -noout -text -in certificado.pem 
 
 
 	openssl pkcs12 -info -in srvutils.p12
@@ -44,9 +42,7 @@ Consultar un certificado de un servidor Remoto y exportar el certificado publico
 
 	echo -n | openssl s_client -connect 10.124.0.81:3636 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ldapserver.crt
 
-Verificar un certificado contra el certificado publico de la CA.
 
-	$ openssl verify -CAfile ca.crt uccdev.credicard.com.ve.crt
 
 Consultar un certificado de un servidor Remoto su tipo de cifrado (cipher)
 
@@ -60,23 +56,43 @@ Consultar un certificado de un servidor Remoto su tipo de cifrado (cipher)
 
 	openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -tls1_2
 
+Para verficar tambien cuales con los ciphers
+
+# nmap --script ssl-enum-ciphers -p 443 10.134.3.62
+
+Starting Nmap 6.40 ( http://nmap.org ) at 2022-03-17 13:35 -04
+Nmap scan report for lcs-qa-app-glpi.credicard.com.ve (10.134.3.62)
+Host is up (0.000083s latency).
+PORT    STATE SERVICE
+443/tcp open  https
+| ssl-enum-ciphers:
+|   SSLv3: No supported ciphers found
+|   TLSv1.2:
+|     ciphers:
+|       TLS_DHE_RSA_WITH_AES_128_CBC_SHA256 - strong
+|       TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 - strong
+|       TLS_DHE_RSA_WITH_AES_256_CBC_SHA256 - strong
+|       TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 - strong
+|       TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 - strong
+|       TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 - strong
+|       TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 - strong
+|       TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 - strong
+|       TLS_RSA_WITH_AES_128_CBC_SHA256 - strong
+|       TLS_RSA_WITH_AES_128_GCM_SHA256 - strong
+|       TLS_RSA_WITH_AES_256_CBC_SHA256 - strong
+|       TLS_RSA_WITH_AES_256_GCM_SHA384 - strong
+|     compressors:
+|       NULL
+|_  least strength: strong
+
+Nmap done: 1 IP address (1 host up) scanned in 0.33 seconds
+
+Para verficar tambien cuales con los ciphers y si tiene el TRACE 
+
+	curl -v -X TRACE -k https://10.134.3.62
 
 
 Consultar un certificado de un servidor Remoto su valides de fecha
 
 	openssl s_client -connect localhost:8443 -CAfile /etc/ssl/ca.crt 2> /dev/null  | openssl x509 -noout -dates
-
-
-Si por alguna razón queremos remover la clave del key, tenemos que saber cual es la clave y hacer.::
-
-	# openssl rsa -in srvutils.key.org -out srvutils.key
-	Enter pass phrase for srvutils.key.org:
-	writing RSA key
-
-	# openssl rsa -check -in keyservice/srvutils.key -out keyservice/srvutils-without.key
-
-Chequear los MD5 de una public key para estar seguro que hace match con el CSR o private key.:
-
-	# openssl x509 -noout -modulus -in CA.crt | openssl md5
-	(stdin)= 2b5ea007e469cb17dd768ee24b7e92d9
 
