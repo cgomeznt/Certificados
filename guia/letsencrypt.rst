@@ -45,6 +45,7 @@ Instalando **certbot** con snap
 
 instalar el httpd  y crear el virtual host
 +++++++++++++++++++++++++++++++++++++++++++++
+::
 
 	dnf install httpd*
 
@@ -79,7 +80,7 @@ debemos bajar el apache::
 
 	systemctl stop httpd
 
-Descargamos el tools de letsencrupt::
+Descargamos el tools de letsencrypt::
 
 	git clone https://github.com/letsencrypt/letsencrypt
 	cd letsencrypt/letsencrypt-auto-source/
@@ -203,7 +204,7 @@ Otorgamos los permisos si es necesario (Opcional)::
 
 
 
-Creamos e lvirtual host ye iniciamos el apache::
+Creamos el virtual host e iniciamos el apache::
 
 	vi /etc/httpd/conf.d/e-deus.cf-SSL.conf
 	<VirtualHost *:443>
@@ -233,7 +234,7 @@ Verifying SSL certificate is not expired
 
 
 
-
+**NOTA** recordemos que estos certificados duran  tres 3 meses
 
 
 
