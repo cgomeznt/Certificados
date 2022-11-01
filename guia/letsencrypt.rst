@@ -1,4 +1,4 @@
-Certificados Digitales Letsencrypt
+Letsencrypt Almalinux 8 Apache
 ================================================
 
 ¿Qué es Let's Encrypt?
@@ -19,12 +19,12 @@ Certbot es una herramienta de software gratuita y de código abierto para usar a
 
 Tenemos dos (2) formas de hacer la instalacion de **certbot**, la primera con la ayuda de los repositorios EPEL de CentOS y la otra utilizando snap desde el sitio oficial 
 
-Instalando **certbot** con yum
+Instalando **certbot** con dnf
 ++++++++++++++++++++++++++++++
 ::
 
-	yum -y install epel-release
-	yum -y install python-certbot-apache
+	dnf -y install epel-release
+	dnf install certbot python3-certbot-apache mod_ssl
 
 
 Instalando **certbot** con snap
@@ -43,21 +43,73 @@ Instalando **certbot** con snap
 
 	ln -s /snap/bin/certbot /usr/bin/certbot
 
+instalar el httpd  y crear el virtual host
++++++++++++++++++++++++++++++++++++++++++++++
+
+	dnf install httpd*
+
+	systemctl enable httpd
+
+	systemctl start httpd
+
+	vi /etc/httpd/conf.d/e-deus.cf.conf
+	<VirtualHost *:80>
+	ServerName e-deus.cf
+	ServerAlias e-deus.cf
+	DocumentRoot /var/www/html
+	</VirtualHost>
+
+Creamos un index para verificar el apache este bien::
+
+	vi /var/www/html/index.html
+	<html>
+	  <head>
+		<title>e-deus.cf</title>
+	  </head>
+	  <body>
+		<h1>Felicitaciones, se creo el Virtual Host de e-deus.cf</h1>
+	  </body>
+	</html>
+
+ahora vamos a instalar el certificado con lestsencript y crear un virtual host.
 
 Creando el certificado firmado por letsencrypt
 ++++++++++++++++++++++++++++++++++++++++++++++
-::
+debemos bajar el apache::
 
-	# certbot certonly -d mail.e-deus.cf -m cgomeznt@gmail.com --standalone
+	systemctl stop httpd
+
+Descargamos el tools de letsencrupt::
+
+	git clone https://github.com/letsencrypt/letsencrypt
+	cd letsencrypt/letsencrypt-auto-source/
+
+Ahora creamos el certificado la llave con la ayuda de certbot::
+
+	# certbot certonly -d e-deus.cf -m cgomeznt@gmail.com --standalone
 	Saving debug log to /var/log/letsencrypt/letsencrypt.log
-	Requesting a certificate for mail.e-deus.cf and e-deus.cf
+	Requesting a certificate for e-deus.cf
+
+	- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	Could not bind TCP port 80 because it is already in use by another process on
+	this system (such as a web server). Please stop the program in question and then
+	try again.
+	- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	(R)etry/(C)ancel: R
 
 	Successfully received certificate.
-	Certificate is saved at: /etc/letsencrypt/live/mail.e-deus.cf-0003/fullchain.pem
-	Key is saved at:         /etc/letsencrypt/live/mail.e-deus.cf-0003/privkey.pem
-	This certificate expires on 2021-10-05.
+	Certificate is saved at: /etc/letsencrypt/live/e-deus.cf/fullchain.pem
+	Key is saved at:         /etc/letsencrypt/live/e-deus.cf/privkey.pem
+	This certificate expires on 2023-01-30.
 	These files will be updated when the certificate renews.
 	Certbot has set up a scheduled task to automatically renew this certificate in the background.
+
+	- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	If you like Certbot, please consider supporting our work by:
+	 * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+	 * Donating to EFF:                    https://eff.org/donate-le
+	- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 Si necesita tener varios nombres de host en el mismo SSL, entonces un Multi-SAN, SSL, por favor ejecute en su lugar, donde -d son sus dominios:::
 
@@ -68,13 +120,14 @@ Si necesita tener varios nombres de host en el mismo SSL, entonces un Multi-SAN,
 
 Puede encontrar todos sus archivos en /etc/letsencrypt/live/$domain, donde $domain es el fqdn que utilizó durante el proceso::
 
-	ls -l /etc/letsencrypt/live/mail.e-deus.cf-0003/
+	ls -l /etc/letsencrypt/live/e-deus.cf/
 	total 4
-	lrwxrwxrwx 1 zimbra root  43 jul  7 16:56 cert.pem -> ../../archive/mail.e-deus.cf-0003/cert1.pem
-	lrwxrwxrwx 1 zimbra root  44 jul  7 16:56 chain.pem -> ../../archive/mail.e-deus.cf-0003/chain1.pem
-	lrwxrwxrwx 1 zimbra root  48 jul  7 16:56 fullchain.pem -> ../../archive/mail.e-deus.cf-0003/fullchain1.pem
-	lrwxrwxrwx 1 zimbra root  46 jul  7 16:56 privkey.pem -> ../../archive/mail.e-deus.cf-0003/privkey1.pem
-	-rw-r--r-- 1 zimbra root 692 jul  7 16:56 README
+	lrwxrwxrwx 1 root root  36 Nov  1 15:56 privkey.pem -> ../../archive/e-deus.cf/privkey1.pem
+	lrwxrwxrwx 1 root root  38 Nov  1 15:56 fullchain.pem -> ../../archive/e-deus.cf/fullchain1.pem
+	lrwxrwxrwx 1 root root  34 Nov  1 15:56 chain.pem -> ../../archive/e-deus.cf/chain1.pem
+	lrwxrwxrwx 1 root root  33 Nov  1 15:56 cert.pem -> ../../archive/e-deus.cf/cert1.pem
+	-rw-r--r-- 1 root root 692 Nov  1 15:56 README
+
 
 cert.pem es el certificado
 
@@ -114,7 +167,7 @@ Su chain.pem debería verse así::
 	R8srzJmwN0jP41ZL9c8PDHIyh8bwRLtTcm1D9SZImlJnt1ir/md2cXjbDaJWFBM5
 	JDGFoqgCWjBH4d1QB7wCCZAA62RjYJsWvIjJEubSfZGL+T0yjWW06XyxV3bqxbYo
 	Ob8VZRzI9neWagqNdwvYkQsEjgfbKbYK7p2CNTUQ
-	-----END CERTIFICATE-----">> /etc/letsencrypt/live/$HOSTNAME/chain.pem
+	-----END CERTIFICATE-----">> /etc/letsencrypt/live/e-deus.cf/chain.pem
 
 Su chain.pem debería verse así::
 
@@ -144,103 +197,30 @@ Su chain.pem debería verse así::
 
 En resumen: chain.pem debe concatenarse con la CA raíz. Primero la cadena y al final del archivo la CA raíz. El orden es importante.
 
-Otorgamos los permisos necesarios y nos cambiamos al usuario zimbra::
+Otorgamos los permisos si es necesario (Opcional)::
 
-	chown -R zimbra /etc/letsencrypt
-	su - zimbra
-
-Backup del directorio Zimbra SSL
-+++++++++++++++++++++++++++
-::
-
-	cp -a /opt/zimbra/ssl/zimbra /opt/zimbra/ssl/zimbra.$(date "+%Y%m%d")
-
-Verifique su certificado comercial.
-++++++++++++++++++++++++++++++++
-
-Copie toda la carpeta Let's Encrypt con todos los archivos /etc/letsencrypt/live/$domain en /opt/zimbra/ssl/letsencrypt::
-
-	cp /etc/letsencrypt/live/$HOSTNAME/privkey.pem /opt/zimbra/ssl/zimbra/commercial/commercial.key
-
-Verificar el certificado SSL con zimbra
-+++++++++++++++++++++++++++++++++++
-
-Como usuario de zimbra::
-
-	su - zimbra
-
-	/opt/zimbra/bin/zmcertmgr verifycrt comm privkey.pem cert.pem chain.pem
-	** Verifying 'cert.pem' against 'privkey.pem'
-	Certificate 'cert.pem' and private key 'privkey.pem' match.
-	** Verifying 'cert.pem' against 'chain.pem'
-	Valid certificate chain: cert.pem: OK
+	chown -R apache /etc/letsencrypt
 
 
-Deploy el certificado SSL con zimbra
-+++++++++++++++++++++++++++++++++++
 
-Como usuario de zimbra::
+Creamos e lvirtual host ye iniciamos el apache::
 
-	/opt/zimbra/bin/zmcertmgr deploycrt comm cert.pem chain.pem
-	** Verifying 'cert.pem' against '/opt/zimbra/ssl/zimbra/commercial/commercial.key'
-	Certificate 'cert.pem' and private key '/opt/zimbra/ssl/zimbra/commercial/commercial.key' match.
-	** Verifying 'cert.pem' against 'chain.pem'
-	Valid certificate chain: cert.pem: OK
-	** Copying 'cert.pem' to '/opt/zimbra/ssl/zimbra/commercial/commercial.crt'
-	** Copying 'chain.pem' to '/opt/zimbra/ssl/zimbra/commercial/commercial_ca.crt'
-	** Appending ca chain 'chain.pem' to '/opt/zimbra/ssl/zimbra/commercial/commercial.crt'
-	** Importing cert '/opt/zimbra/ssl/zimbra/commercial/commercial_ca.crt' as 'zcs-user-commercial_ca' into cacerts '/opt/zimbra/common/lib/jvm/java/lib/security/cacerts'
-	** NOTE: restart mailboxd to use the imported certificate.
-	** Saving config key 'zimbraSSLCertificate' via zmprov modifyServer mail.e-deus.cf...failed (rc=1)
-	** Installing imapd certificate '/opt/zimbra/conf/imapd.crt' and key '/opt/zimbra/conf/imapd.key'
-	** Copying '/opt/zimbra/ssl/zimbra/commercial/commercial.crt' to '/opt/zimbra/conf/imapd.crt'
-	** Copying '/opt/zimbra/ssl/zimbra/commercial/commercial.key' to '/opt/zimbra/conf/imapd.key'
-	** Creating file '/opt/zimbra/ssl/zimbra/jetty.pkcs12'
-	** Creating keystore '/opt/zimbra/conf/imapd.keystore'
-	** Installing ldap certificate '/opt/zimbra/conf/slapd.crt' and key '/opt/zimbra/conf/slapd.key'
-	** Copying '/opt/zimbra/ssl/zimbra/commercial/commercial.crt' to '/opt/zimbra/conf/slapd.crt'
-	** Copying '/opt/zimbra/ssl/zimbra/commercial/commercial.key' to '/opt/zimbra/conf/slapd.key'
-	** Creating file '/opt/zimbra/ssl/zimbra/jetty.pkcs12'
-	** Creating keystore '/opt/zimbra/mailboxd/etc/keystore'
-	** Installing mta certificate '/opt/zimbra/conf/smtpd.crt' and key '/opt/zimbra/conf/smtpd.key'
-	** Copying '/opt/zimbra/ssl/zimbra/commercial/commercial.crt' to '/opt/zimbra/conf/smtpd.crt'
-	** Copying '/opt/zimbra/ssl/zimbra/commercial/commercial.key' to '/opt/zimbra/conf/smtpd.key'
-	** Installing proxy certificate '/opt/zimbra/conf/nginx.crt' and key '/opt/zimbra/conf/nginx.key'
-	** Copying '/opt/zimbra/ssl/zimbra/commercial/commercial.crt' to '/opt/zimbra/conf/nginx.crt'
-	** Copying '/opt/zimbra/ssl/zimbra/commercial/commercial.key' to '/opt/zimbra/conf/nginx.key'
-	** NOTE: restart services to use the new certificates.
-	** Cleaning up 9 files from '/opt/zimbra/conf/ca'
-	** Removing /opt/zimbra/conf/ca/ca.key
-	** Removing /opt/zimbra/conf/ca/ca.pem
-	** Removing /opt/zimbra/conf/ca/77927c8c.0
-	** Removing /opt/zimbra/conf/ca/commercial_ca_1.crt
-	** Removing /opt/zimbra/conf/ca/8d33f237.0
-	** Removing /opt/zimbra/conf/ca/commercial_ca_2.crt
-	** Removing /opt/zimbra/conf/ca/4042bcee.0
-	** Removing /opt/zimbra/conf/ca/commercial_ca_3.crt
-	** Removing /opt/zimbra/conf/ca/2e5ac55d.0
-	** Copying CA to /opt/zimbra/conf/ca
-	** Copying '/opt/zimbra/ssl/zimbra/ca/ca.key' to '/opt/zimbra/conf/ca/ca.key'
-	** Copying '/opt/zimbra/ssl/zimbra/ca/ca.pem' to '/opt/zimbra/conf/ca/ca.pem'
-	** Creating CA hash symlink '77927c8c.0' -> 'ca.pem'
-	** Creating /opt/zimbra/conf/ca/commercial_ca_1.crt
-	** Creating CA hash symlink '8d33f237.0' -> 'commercial_ca_1.crt'
-	** Creating /opt/zimbra/conf/ca/commercial_ca_2.crt
-	** Creating CA hash symlink '4042bcee.0' -> 'commercial_ca_2.crt'
-	** Creating /opt/zimbra/conf/ca/commercial_ca_3.crt
-	** Creating CA hash symlink '2e5ac55d.0' -> 'commercial_ca_3.crt'
-	[zimbra@mail mail.e-deus.cf-0003]$ zmcontrol restart
-
-Reiniciamos Zimbra
-+++++++++++++++++++
-::
-
-	zmcontrol restart
+	vi /etc/httpd/conf.d/e-deus.cf-SSL.conf
+	<VirtualHost *:443>
+	ServerName e-deus.cf
+	ServerAlias e-deus.cf
+	DocumentRoot /var/www/html
+	SSLEngine on
+	SSLCertificateFile /etc/letsencrypt/live/e-deus.cf/cert.pem
+	SSLCertificateKeyFile /etc/letsencrypt/live/e-deus.cf/privkey.pem
+	SSLCertificateChainFile /etc/letsencrypt/live/e-deus.cf/chain.pem
+	</VirtualHost>
 
 
 Test el nuevo SSL Certificado
 ++++++++++++++++++++++
 
+https://e-deus.cf
 
 Test el nuevo SSL Certificado con OpenSSL
 ++++++++++++++++++++++
