@@ -17,7 +17,10 @@ Varios tipos de consulta
 
 Verificar todas los certificados en un PEM
 	awk -v cmd='openssl x509 -noout -subject' '/BEGIN/{close(cmd)};{print | cmd}' < /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+	
+	openssl crl2pkcs7 -nocrl -certfile /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem | openssl pkcs7 -print_certs -text -noout
 
+	
 Verificar un certificado contra su CA
 
 	# openssl verify -verbose -CAfile /etc/ssl/ca.crt /etc/ssl/certs/zabbix.pem.vence-2023
