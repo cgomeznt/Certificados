@@ -2,6 +2,7 @@
 
 * [Crear una Entidad certificadora CA en Centos 7](guia/cacentos7.rst) 
 * [Instalar y verificar el certificado de CA raiz](guia/InstalarverificarcertificadoCAraiz.rst)
+* [Actualizar la CA en CentOS](guia/1. Actualizar la CA en CentOS.txt)
 * [Agregar certificados raíz de confianza en los servidores](guia/addcertificaterootserver.rst)
 * [openssl verificar una URL con su certificado publico de CA](guia/openssl_verificar-URL_su_certificado_publico_CA.rst)
 * [Navegador aceptar Trusted ROOT](guia/NavegadoresTrustedRoot.rst)
