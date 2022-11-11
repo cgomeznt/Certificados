@@ -15,7 +15,18 @@ Varios tipos de consulta
 
 	openssl pkcs12 -info -in srvutils.p12
 
+Verificar todas los certificados en un PEM
+	awk -v cmd='openssl x509 -noout -subject' '/BEGIN/{close(cmd)};{print | cmd}' < /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
 
+Verificar un certificado contra su CA
+
+	# openssl verify -verbose -CAfile /etc/ssl/ca.crt /etc/ssl/certs/zabbix.pem.vence-2023
+	/etc/ssl/certs/zabbix.pem.vence-2023: OK
+
+
+
+	[root@srv-vccs-ldap-01]:/etc/openldap/certs>openssl x509 -in Ldapclusprd.crt -noout -enddate
+	notAfter=Oct 31 14:54:02 2018 GMT
 
 Fecha de vencimiento
 	openssl x509 -in Ldapclusprd.crt -noout -enddate
