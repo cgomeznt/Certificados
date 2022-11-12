@@ -20,6 +20,13 @@ Verificar todas los certificados en un PEM
 	
 	openssl crl2pkcs7 -nocrl -certfile /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem | openssl pkcs7 -print_certs -text -noout
 
+Verificar que el CRT y el KEY se correspondan::
+
+	# openssl x509 -noout -modulus -in srvutils.crt | openssl md5
+	(stdin)= 301fb015b4ce4cff58ad6073f1ca3f33
+	# openssl rsa -noout -modulus -in srvutils.key | openssl md5
+	(stdin)= 301fb015b4ce4cff58ad6073f1ca3f33
+	
 	
 Verificar un certificado contra su CA
 
@@ -50,6 +57,11 @@ Consultar el certificado de un servidor Remoto
 Verificar el certificado::
 
 	# openssl verify -CAfile CA_empresa.crt srvutils.crt
+	
+Verificar el certificado contra la CA en los repositorios del SO::
+
+	# openssl verify  srvutils.crt
+	srvutils.crt: OK
 
 
 Consultar un certificado de un servidor Remoto y exportar el certificado publico
