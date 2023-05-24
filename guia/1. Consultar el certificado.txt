@@ -1,124 +1,74 @@
+Recuerda el password lo puedes ver en domain.xml
 
-Varios tipos de consulta
-
-	keytool -list -v -keystore portalappclusprd.jks
-
-	openssl req -text -noout -in slbbe.credicard.com.ve.csr
-
-	openssl rsa -check -in  /etc/pki/tls/private/101-cert.key 
-
-	openssl x509 -text -noout -in Ldapclusprd.crt
+keytool -list -v -keystore portalappclusprd.jks
 
 
-	openssl x509 -inform pem -noout -text -in certificado.pem 
+openssl rsa -check -in /etc/pki/tls/private/101-cert.key 
+
+openssl req -text -noout -in slbbe.credicard.com.ve.csr
 
 
-	openssl pkcs12 -info -in srvutils.p12
+openssl x509 -inform pem -noout -text  -in certificado.pem 
+
+openssl pkcs12 -info -in keystore_file.p12
+
+openssl x509 -noout -text -in Ldapclusprd.crt 
+
 
 Verificar todas los certificados en un PEM
-	awk -v cmd='openssl x509 -noout -subject' '/BEGIN/{close(cmd)};{print | cmd}' < /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
-	
-	openssl crl2pkcs7 -nocrl -certfile /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem | openssl pkcs7 -print_certs -text -noout
+awk -v cmd='openssl x509 -noout -subject' '/BEGIN/{close(cmd)};{print | cmd}' < /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
 
-Verificar que el CRT y el KEY se correspondan::
+openssl crl2pkcs7 -nocrl -certfile /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem | openssl pkcs7 -print_certs -text -noout
 
-	# openssl x509 -noout -modulus -in srvutils.crt | openssl md5
-	(stdin)= 301fb015b4ce4cff58ad6073f1ca3f33
-	# openssl rsa -noout -modulus -in srvutils.key | openssl md5
-	(stdin)= 301fb015b4ce4cff58ad6073f1ca3f33
-	
-	
+
 Verificar un certificado contra su CA
 
-	# openssl verify -verbose -CAfile /etc/ssl/ca.crt /etc/ssl/certs/zabbix.pem.vence-2023
-	/etc/ssl/certs/zabbix.pem.vence-2023: OK
+# openssl verify -verbose -CAfile /etc/ssl/ca.crt /etc/ssl/certs/zabbix.pem.vence-2023
+/etc/ssl/certs/zabbix.pem.vence-2023: OK
 
 
 
-	[root@srv-vccs-ldap-01]:/etc/openldap/certs>openssl x509 -in Ldapclusprd.crt -noout -enddate
-	notAfter=Oct 31 14:54:02 2018 GMT
-
-Fecha de vencimiento
-	openssl x509 -in Ldapclusprd.crt -noout -enddate
-	  notAfter=Oct 31 14:54:02 2018 GMT
+[root@srv-vccs-ldap-01]:/etc/openldap/certs>openssl x509 -in Ldapclusprd.crt -noout -enddate
+notAfter=Oct 31 14:54:02 2018 GMT
 
 
 Cuando genere este error se le debe indicar el -inform
-	error:0906D06C:PEM routines:PEM_read_bio:no start line:pem_lib.c:703:Expecting: TRUSTED CERTIFICATE
+error:0906D06C:PEM routines:PEM_read_bio:no start line:pem_lib.c:703:Expecting: TRUSTED CERTIFICATE
 
 
-Consultar el certificado de un servidor Remoto
+Consultar un certificado de un servidor en especifico
 
-	openssl s_client -connect localhost:9400 -CAfile /etc/ssl/ca.crt
+openssl s_client -connect localhost:9400 -CAfile /etc/ssl/ca.crt
 
-	openssl s_client -connect 10.124.0.81:3636
-
-
-Verificar el certificado::
-
-	# openssl verify -CAfile CA_empresa.crt srvutils.crt
-	
-Verificar el certificado contra la CA en los repositorios del SO::
-
-	# openssl verify  srvutils.crt
-	srvutils.crt: OK
+openssl s_client -connect 10.124.0.81:3636
 
 
-Consultar un certificado de un servidor Remoto y exportar el certificado publico
+Consultar un certificado de un servidor en especifico y saber la fechas validas del certificado
 
-	echo -n | openssl s_client -connect 10.124.0.81:3636 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ldapserver.crt
+echo | openssl s_client -connect 10.132.0.55:443 | openssl x509 -noout -dates
 
 
 
-Consultar un certificado de un servidor Remoto su tipo de cifrado (cipher)
+Consultar un certificado de un servidor en especifico y exportar el certificado publico
 
-	openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -ssl2
-
-	openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -ssl3
-
-	openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -tls1
-
-	openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -tls1_1
-
-	openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -tls1_2
-
-Para verficar tambien cuales con los ciphers
-
-# nmap --script ssl-enum-ciphers -p 443 10.134.3.62
-
-Starting Nmap 6.40 ( http://nmap.org ) at 2022-03-17 13:35 -04
-Nmap scan report for lcs-qa-app-glpi.credicard.com.ve (10.134.3.62)
-Host is up (0.000083s latency).
-PORT    STATE SERVICE
-443/tcp open  https
-| ssl-enum-ciphers:
-|   SSLv3: No supported ciphers found
-|   TLSv1.2:
-|     ciphers:
-|       TLS_DHE_RSA_WITH_AES_128_CBC_SHA256 - strong
-|       TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 - strong
-|       TLS_DHE_RSA_WITH_AES_256_CBC_SHA256 - strong
-|       TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 - strong
-|       TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 - strong
-|       TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 - strong
-|       TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 - strong
-|       TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 - strong
-|       TLS_RSA_WITH_AES_128_CBC_SHA256 - strong
-|       TLS_RSA_WITH_AES_128_GCM_SHA256 - strong
-|       TLS_RSA_WITH_AES_256_CBC_SHA256 - strong
-|       TLS_RSA_WITH_AES_256_GCM_SHA384 - strong
-|     compressors:
-|       NULL
-|_  least strength: strong
-
-Nmap done: 1 IP address (1 host up) scanned in 0.33 seconds
-
-Para verficar tambien cuales con los ciphers y si tiene el TRACE 
-
-	curl -v -X TRACE -k https://10.134.3.62
+echo -n | openssl s_client -connect 10.124.0.81:3636 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ldapserver.crt
 
 
-Consultar un certificado de un servidor Remoto su valides de fecha
 
-	openssl s_client -connect localhost:8443 -CAfile /etc/ssl/ca.crt 2> /dev/null  | openssl x509 -noout -dates
+Consultar un certificado de un servidor en especifico su tipo de cifrado (cipher)
 
+openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -ssl2
+
+openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -ssl3
+
+openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -tls1
+
+openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -tls1_1
+
+openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -tls1_2
+
+
+
+Consultar un certificado de un servidor en especifico su valides de fecha
+
+openssl s_client -connect localhost:8443 -CAfile /etc/ssl/ca.crt 2> /dev/null  | openssl x509 -noout -dates
