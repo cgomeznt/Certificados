@@ -15,6 +15,17 @@ openssl pkcs12 -info -in keystore_file.p12
 openssl x509 -noout -text -in Ldapclusprd.crt 
 
 
+
+Consultar un certificado del tipo DER binario o data
+
+$ file redisprep.telecom.com.ar\ \(1\).der
+redisprep.telecom.com.ar (1).der: data
+
+$ openssl x509 -in redisprep.telecom.com.ar.der -inform DER -noout -text
+
+
+
+
 Verificar todas los certificados en un PEM
 awk -v cmd='openssl x509 -noout -subject' '/BEGIN/{close(cmd)};{print | cmd}' < /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
 
