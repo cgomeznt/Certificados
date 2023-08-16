@@ -3,18 +3,28 @@ Recuerda el password lo puedes ver en domain.xml
 keytool -list -v -keystore portalappclusprd.jks
 
 
-openssl rsa -in /etc/pki/tls/private/101-cert.key -check
+openssl rsa -check -in /etc/pki/tls/private/101-cert.key 
 
 openssl req -text -noout -in slbbe.credicard.com.ve.csr
 
 
-openssl x509 -in certificado.pem -inform pem -noout -text
-openssl rsa -in certificado.pem -inform pem -noout -text
+openssl x509 -inform pem -noout -text  -in certificado.pem 
+
+openssl pkcs12 -info -in keystore_file.p12
+
+openssl x509 -noout -text -in Ldapclusprd.crt 
 
 
-openssl x509 -in Ldapclusprd.crt -noout -text
+Verificar todas los certificados en un PEM
+awk -v cmd='openssl x509 -noout -subject' '/BEGIN/{close(cmd)};{print | cmd}' < /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+
+openssl crl2pkcs7 -nocrl -certfile /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem | openssl pkcs7 -print_certs -text -noout
 
 
+Verificar un certificado contra su CA
+
+# openssl verify -verbose -CAfile /etc/ssl/ca.crt /etc/ssl/certs/zabbix.pem.vence-2023
+/etc/ssl/certs/zabbix.pem.vence-2023: OK
 
 
 
@@ -31,6 +41,11 @@ Consultar un certificado de un servidor en especifico
 openssl s_client -connect localhost:9400 -CAfile /etc/ssl/ca.crt
 
 openssl s_client -connect 10.124.0.81:3636
+
+
+Consultar un certificado de un servidor en especifico y saber la fechas validas del certificado
+
+echo | openssl s_client -connect 10.132.0.55:443 | openssl x509 -noout -dates
 
 
 
@@ -57,3 +72,10 @@ openssl s_client -connect 10.134.0.22:443 -CAfile /etc/ssl/ca.crt -tls1_2
 Consultar un certificado de un servidor en especifico su valides de fecha
 
 openssl s_client -connect localhost:8443 -CAfile /etc/ssl/ca.crt 2> /dev/null  | openssl x509 -noout -dates
+
+
+Con nmap puedo saber las versiones de SSL/TLS y los Ciphers:
+
+nmap --script ssl-enum-ciphers -p443 intranetqa.credicard.com.ve
+
+nmap --script ssl-enum-ciphers -p636 10.133.0.237
