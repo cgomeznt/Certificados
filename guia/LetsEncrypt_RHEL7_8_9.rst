@@ -1,4 +1,4 @@
-Certificados Digitales Letsencrypt Standalone RHEL 7/8/9
+Certificados Digitales Letsencrypt Standalone RHEL 7/8/9 y Debian 11
 ================================================
 
 ¿Qué es Let's Encrypt?
@@ -43,6 +43,19 @@ Instalando **certbot** con snap
 
 	ln -s /snap/bin/certbot /usr/bin/certbot
 
+Instalando **certbot** en **Debian 11**
+++++++++++++++++++++++++++++++
+::
+
+	apt install snapd
+	
+	snap install core
+	
+	apt-get remove certbot
+	
+	snap install --classic certbot
+	
+	ln -s /snap/bin/certbot /usr/bin/certbot
 
 Creando el certificado firmado por letsencrypt
 ++++++++++++++++++++++++++++++++++++++++++++++
